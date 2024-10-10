@@ -1,0 +1,9 @@
+<script>
+var heroBanner = document.querySelector('div.open-banner__content');
+heroBanner.lastChild.style.display = 'none';
+heroBanner.parentNode.style.marginTop = 'var(--space-128)';
+heroBanner.parentNode.style.padding = 'var(--space-32) var(--space-16)';
+if(window.screen.width < 768){
+    heroBanner.parentNode.style.borderRadius = '0';
+}
+</script>

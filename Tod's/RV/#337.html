@@ -1,0 +1,23 @@
+<script>
+    var imageToInsert = `
+        <img style="width: 100%; margin-bottom: 10px;" src='https://www.rogervivier.com/medias/05-24-RV-highsummer-3317-1-1-1-1-.jpg?context=bWFzdGVyfHJvb3R8NTg2MzQ3NXxpbWFnZS9qcGVnfGhmNS9oNzQvOTAxNTcwOTEzODk3NC5qcGd8MTU4N2UxOTYzNGI1NWZlN2Q3NmM3ZGZhZDEwMjY5ODE4ZTY4MTdkNTUwOGMxZDkwZWQzNGVjNWJlNzMzYTdkOA&attachment=true'/>
+        `;
+        var boxToEdit = document.querySelector('.Popin-newsletter-title');
+
+        if (!boxToEdit.querySelector('img[src="https://www.rogervivier.com/medias/05-24-RV-highsummer-3317-1-1-1-1-.jpg?context=bWFzdGVyfHJvb3R8NTg2MzQ3NXxpbWFnZS9qcGVnfGhmNS9oNzQvOTAxNTcwOTEzODk3NC5qcGd8MTU4N2UxOTYzNGI1NWZlN2Q3NmM3ZGZhZDEwMjY5ODE4ZTY4MTdkNTUwOGMxZDkwZWQzNGVjNWJlNzMzYTdkOA&attachment=true"]')) {
+            var imgContainer = document.createElement('div');
+            imgContainer.innerHTML = imageToInsert;
+            imgContainer.style.cssText = 'width: 100%;';
+            var secondChild = boxToEdit.querySelector('h1');
+            boxToEdit.insertBefore(imgContainer, secondChild.nextSibling);
+        }
+
+        var style = document.createElement('style');
+        style.innerHTML = `
+        .Popin-newsletter-title h5 {
+            margin-bottom: 0 !important;
+        }
+        `;
+        document.head.appendChild(style);
+
+</script>>

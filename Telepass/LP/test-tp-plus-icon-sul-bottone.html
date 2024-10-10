@@ -1,0 +1,46 @@
+<script>
+    var icon_mobile = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12Z" fill="#FEE01A"/>
+    <path d="M11.4805 4.55092C11.7623 4.25203 12.2377 4.25203 12.5195 4.55092L13.6652 5.76599C13.8322 5.94307 14.0779 6.0229 14.3171 5.97778L15.9582 5.66822C16.3619 5.59207 16.7464 5.87145 16.7987 6.27892L17.0115 7.93537C17.0425 8.17679 17.1943 8.38578 17.4143 8.48986L18.924 9.20405C19.2953 9.37973 19.4422 9.83177 19.245 10.1922L18.4435 11.6573C18.3267 11.8708 18.3267 12.1292 18.4435 12.3427L19.245 13.8078C19.4422 14.1682 19.2953 14.6203 18.924 14.796L17.4143 15.5101C17.1943 15.6142 17.0425 15.8232 17.0115 16.0646L16.7987 17.7211C16.7464 18.1285 16.3619 18.4079 15.9582 18.3318L14.3171 18.0222C14.0779 17.9771 13.8322 18.0569 13.6652 18.234L12.5195 19.4491C12.2377 19.748 11.7623 19.748 11.4805 19.4491L10.3348 18.234C10.1678 18.0569 9.92211 17.9771 9.68294 18.0222L8.04182 18.3318C7.63812 18.4079 7.25359 18.1286 7.20127 17.7211L6.98854 16.0646C6.95754 15.8232 6.8057 15.6142 6.58569 15.5101L5.07604 14.796C4.70468 14.6203 4.55781 14.1682 4.75498 13.8078L5.55652 12.3427C5.67334 12.1292 5.67334 11.8708 5.55652 11.6573L4.75498 10.1922C4.55781 9.83177 4.70468 9.37973 5.07604 9.20405L6.58569 8.48986C6.8057 8.38578 6.95754 8.17679 6.98854 7.93537L7.20127 6.27892C7.25359 5.87145 7.63812 5.59207 8.04182 5.66822L9.68294 5.97778C9.92211 6.0229 10.1678 5.94307 10.3348 5.76599L11.4805 4.55092Z" fill="#002752"/>
+    <mask id="path-3-inside-1_14_11130" fill="white">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5 9.74999C10.5 10.1642 10.1642 10.5 9.75001 10.5C9.33579 10.5 9 10.1642 9 9.74999C9 9.33578 9.33579 9 9.75001 9C10.1642 9 10.5 9.33578 10.5 9.74999ZM14.6809 9.31961C14.9189 9.55758 14.9189 9.94341 14.6809 10.1814L10.1809 14.6813C9.94293 14.9193 9.55709 14.9193 9.31911 14.6813C9.08113 14.4433 9.08113 14.0575 9.31911 13.8195L13.8192 9.31961C14.0571 9.08164 14.443 9.08164 14.6809 9.31961ZM14.25 15C14.6642 15 15 14.6642 15 14.25C15 13.8358 14.6642 13.5 14.25 13.5C13.8358 13.5 13.5 13.8358 13.5 14.25C13.5 14.6642 13.8358 15 14.25 15Z"/>
+    </mask>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5 9.74999C10.5 10.1642 10.1642 10.5 9.75001 10.5C9.33579 10.5 9 10.1642 9 9.74999C9 9.33578 9.33579 9 9.75001 9C10.1642 9 10.5 9.33578 10.5 9.74999ZM14.6809 9.31961C14.9189 9.55758 14.9189 9.94341 14.6809 10.1814L10.1809 14.6813C9.94293 14.9193 9.55709 14.9193 9.31911 14.6813C9.08113 14.4433 9.08113 14.0575 9.31911 13.8195L13.8192 9.31961C14.0571 9.08164 14.443 9.08164 14.6809 9.31961ZM14.25 15C14.6642 15 15 14.6642 15 14.25C15 13.8358 14.6642 13.5 14.25 13.5C13.8358 13.5 13.5 13.8358 13.5 14.25C13.5 14.6642 13.8358 15 14.25 15Z" fill="white"/>
+    </svg>`;
+
+    var dc = '';
+    var cl = '.no-desktop-flex';
+    if(window.location.href.includes('dc=')){
+        var sdc = new URL(window.location.href).searchParams.get('dc');
+        if(sdc == 'v2'){
+            dc = '#v2-hero ';
+            cl = '.no-desktop-flex';
+        }else if(sdc == 'v3'){
+            dc = '#v3-hero ';
+            cl = '';
+        }
+    }
+
+    var bottone_hero_mobile = document.querySelector(dc + '.hero-box .button' + cl);
+    var promo_plus_mobile = document.createElement('div');
+    promo_plus_mobile.innerHTML = icon_mobile;
+    promo_plus_mobile.style.cssText = 'position: absolute; top: -10px; right: -5px;';
+    bottone_hero_mobile.appendChild(promo_plus_mobile);
+
+    bottone_hero_mobile.addEventListener('click', function(){
+        var int = setInterval(function(){
+            if(document.querySelector('.modal-container.open')){
+                //metto il badge
+                if(!document.querySelector('#promo-modal-jkl')){
+                    var button = document.querySelector('.modal-container.open .modal-box-text > .box > a.button.no-desktop');
+                    var promo_plus_modal = document.createElement('div');
+                    promo_plus_modal.id = 'promo-modal-jkl';
+                    promo_plus_modal.innerHTML = icon_mobile;
+                    promo_plus_modal.style.cssText = 'position: absolute; top: -10px; right: -5px;';
+                    button.appendChild(promo_plus_modal);
+                }
+                clearInterval(int);
+            }
+        },1)
+    })
+</script>

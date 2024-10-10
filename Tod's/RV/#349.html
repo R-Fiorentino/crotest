@@ -1,0 +1,134 @@
+<script>
+//Prendo l'aggiungi al carrello
+var add_to_cart = document.querySelector('.Product-product-details-content-add');
+
+//Al click faccio il controllo per vedere se è stata selezionata o meno la taglia - (è diverso per ogni grandezza dello schermo) - Section (>= 1024) - Select (< 1024)
+add_to_cart.addEventListener('click', function(){
+    if(!document.querySelector('#complete-look-rv-jkl')){
+        if(window.screen.width > 1023){
+            // Controllo se il valore è un numero
+            if(!isNaN(Number(document.querySelector('.size-chc__val').textContent))){
+                setTimeout(function() {
+                    shopByLookRV();
+                }, 3000); // 1000 millisecondi = 1 secondo
+            }
+        }else{
+            // Controllo se la value del select è effettivamente una taglia selezionata
+            if(document.querySelector('select.input-select.input-select--filled').value != 'no-selection'){
+                setTimeout(function() {
+                    shopByLookRV();
+                }, 3000); // 1000 millisecondi = 1 secondo
+            }
+        } 
+    }else{
+        document.querySelector('#complete-look-rv-jkl').remove();
+        if(window.screen.width > 1023){
+            // Controllo se il valore è un numero
+            if(!isNaN(Number(document.querySelector('.size-chc__val').textContent))){
+                setTimeout(function() {
+                    shopByLookRV();
+                }, 3000); // 1000 millisecondi = 1 secondo
+            }
+        }else{
+            // Controllo se la value del select è effettivamente una taglia selezionata
+            if(document.querySelector('select.input-select.input-select--filled').value != 'no-selection'){
+                setTimeout(function() {
+                    shopByLookRV();
+                }, 3000); // 1000 millisecondi = 1 secondo
+            }
+        } 
+    }
+});
+
+function shopByLookRV(){
+
+    if(!document.querySelector('#complete-look-rv-jkl') && document.querySelector('.prd-rfrs__ttl')){
+    //Creo l'elemento che andrà messo in pagina dopo un add to cart
+    var shopByLook_mc = document.createElement('div');
+    shopByLook_mc.id = 'complete-look-rv-jkl';
+    var sbl_title = document.querySelector('.prd-rfrs__ttl').textContent;
+    shopByLook_mc.style.cssText = 'background-color: #f8f8f8; padding: 20px 10px; display: inline-flex; flex-direction: column; margin-top: 20px;';
+
+    //Stampo il titolo "Completa il look" e l'iconma per la chiusura
+    shopByLook_mc.innerHTML = '<div style="font-family: FreightDisp, Times New Roman, serif, arial; font-size: 1.5rem; line-height: 1.5rem; padding: 0 0 20px 10px; position: relative;">' + sbl_title + '<div style="position: absolute; top: 0; right: 10px; font-size: 1rem;" id="close-only-dsk"><i style="color: black;" class="icon-close"></i></div></div>';
+    var products = document.createElement('div');
+    products.style.cssText = 'display: inline-flex;';
+
+    //Prendo i prodotti dello shop by look
+    var sbl_prods = document.querySelectorAll('.prd-rfrs__itms a.prd-rfr__link');
+
+    // var num_p = sbl_prods.length;
+    sbl_prods.forEach(function(p){
+
+        //Prendo Nome del prodotto, Prezzo, Immagine e Link alla pdp del prodotto nello shop by look
+        var link = p.href;
+        var img = p.querySelector('img').getAttribute('src');
+        var name = p.querySelector('.prd-rfr__name').textContent;
+        var price = p.querySelector('.prd-rfr__cnt > div > p').textContent;
+
+        //Costruisco il singolo prodotto
+        var product = document.createElement('a');
+        product.style.textDecoration = 'none';
+        product.style.width = '160px';
+        product.style.padding = '0px 10px';
+        product.href = link;
+        product.innerHTML = '<img style="width: 100%;" src="' + img + '" /><div style="font-size: .875rem; display: flex; flex-direction: column; justify-content: space-between;"><div style="color: black; font-weight: 700; line-height: 1.25rem;">' + name + '</div><div style="font-family: Graphik, sans serif, arial; font-weight: 400; letter-spacing: .1px; color: #494949;">' + price + '</div></div>';
+
+        //Appendo il prodotto dentro all'elemento
+        products.appendChild(product);
+
+    })
+
+    //Prendo il mini-cart
+    var minicart = document.querySelector('#Slide-basket .Slide-basket-actions');
+    var popupmc = document.querySelector('#Slide-basket .Slide-basket-filled');
+    var overlay = document.querySelector('#Black-layer');
+    shopByLook_mc.appendChild(products);
+
+    //In base alla grandezza dello schermo stampo l'elemento nell'overlay o nel minicart
+    if(window.screen.width > 1023){
+        //Stampo l'elemento sull'overlay
+        overlay.appendChild(shopByLook_mc);
+        document.querySelector('#complete-look-rv-jkl').style.cssText += 'position: absolute; top: 30px; right: 510px;';
+    }else{
+        //Stampo l'elemento dentro al minicart/popup
+        var mobInt = setInterval(function(){
+            if(minicart){
+            if(window.screen.width < 768){
+                popupmc.appendChild(shopByLook_mc);
+                popupmc.style.cssText = 'max-height: 340px; overflow-y: scroll;';
+                
+            }else{
+                minicart.appendChild(shopByLook_mc);
+                document.querySelector('#complete-look-rv-jkl').style.marginLeft = '-40px';
+            }
+            document.querySelector('#close-only-dsk').style.display = 'none';
+            clearInterval(mobInt);
+            } 
+        },100);
+    }
+
+    //rimuovo l'elemento quando clicco sull'overlay
+    overlay.addEventListener('click', function(){
+        if(document.querySelector('#complete-look-rv-jkl')){
+            document.querySelector('#complete-look-rv-jkl').remove();
+        }
+    })
+
+    //Rimuovo l'elemento quando clicco sulla x dell'elemento
+    if(document.querySelector('#complete-look-rv-jkl')){
+    document.querySelector('#complete-look-rv-jkl .icon-close').addEventListener('click', function(){
+        document.querySelector('#complete-look-rv-jkl').remove();
+    })
+    }
+
+    //Rimuovo l'elemento quando clicco sulla x del minicart
+    document.querySelector('#basketTriggerClose .icon-close').addEventListener('click', function(){
+        if(document.querySelector('#complete-look-rv-jkl')){
+            document.querySelector('#complete-look-rv-jkl').remove();
+        }
+    })
+    }
+
+}
+</script>

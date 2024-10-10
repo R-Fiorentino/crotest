@@ -1,0 +1,47 @@
+<!-- Script solo per mobile che duplica la search bar direttamente in pagina (solo in plp) -->
+<script>
+    function moveAndDuplicateSearchMain() {
+    if (window.innerWidth >= 768) {
+        return;
+    }
+    let searchMainOriginal = document.querySelector('.search-main');
+    let cmPlpSection = document.querySelector('section.cm-plp');
+    let sideLayer = document.querySelector('.side-layer');
+    if (searchMainOriginal && cmPlpSection && sideLayer) {
+        let searchMainClone = searchMainOriginal.cloneNode(true);
+        searchMainClone.classList.add('duplicated');
+        searchMainOriginal.parentNode.insertBefore(searchMainClone, searchMainOriginal);
+        cmPlpSection.parentNode.insertBefore(searchMainOriginal, cmPlpSection);
+        const observer = new MutationObserver(() => {
+            if (sideLayer.classList.contains('show')) {
+                searchMainClone.parentNode.insertBefore(searchMainOriginal, searchMainClone);
+            } else {
+                cmPlpSection.parentNode.insertBefore(searchMainOriginal, cmPlpSection);
+            }
+        });
+        observer.observe(sideLayer, { attributes: true, attributeFilter: ['class'] });
+    }
+}
+setInterval(function() {
+    if (!document.querySelector('.search-main.duplicated') && window.innerWidth < 768) {
+        moveAndDuplicateSearchMain();
+    }
+}, 1000);
+const style = document.createElement('style');
+style.innerHTML = `
+    .search-main.duplicated {
+        display: none;
+    }
+    #content .search-main{
+        padding: 18px 20px;
+    }
+    #content .search-main .visual-search{
+    display: none;
+    }
+    #content .search-main form div{
+    margin-bottom: 0;
+    }
+`;
+document.head.appendChild(style);
+
+</script>

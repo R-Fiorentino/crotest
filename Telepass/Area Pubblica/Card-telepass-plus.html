@@ -1,0 +1,308 @@
+<script>
+    let firstTime = false;
+    var int = setInterval(function(){
+        if((document.querySelector('.Strip__content__item > .container-fluid > div[data-testid="listChildren"]') || document.querySelector('#home-page-privati-intro-strip .Strip__content__item > .slider-wrapper > div')) && firstTime && !document.querySelector('#card-jkl-tp-plus')){
+            cardsTP();
+            clearInterval(int);
+        }
+    },50);
+
+    function cardsTP(){
+        var h = document.querySelector('.Strip__content__item > .container-fluid > div[data-testid="listChildren"]') || document.querySelector('#home-page-privati-intro-strip .Strip__content__item > .slider-wrapper > div');
+        var f = h.parentElement;
+        f.classList.add('container-cards-jkl');
+        h.style.display = 'none';
+        if(!document.querySelector('#card-jkl-tp-plus')){
+            var cards_info = {
+            plus: {
+                label: 'La più completa',
+                type: 'Telepass Plus',
+                canone: 'Canone zero',
+                sub: 'per 1 anno, poi 4,90 € al mese',
+                button: 'Lo voglio',
+                link: 'https://www.telepass.com/it/privati/offerte/plus',
+                cb_s: 'Sconti su 17 tratte autostradali, 120 € di Cashback su: servizi Plus, Carburante e altro',
+                s_m: 24
+            },
+            base: {
+                label: null,
+                type: 'Telepass Base',
+                canone: 'Canone zero',
+                sub: 'per 1 anno, poi 3,90 € al mese',
+                button: 'Lo voglio',
+                link: 'https://www.telepass.com/it/privati/offerte/base',
+                cb_s: 'Sconti su 17 tratte autostradali',
+                s_m: 8
+            },
+            ppu: {                
+                label: null,
+                type: 'Telepass Pay Per Use',
+                canone: '2,50 € al mese',
+                sub: 'solo all\'utilizzo',
+                button: 'Lo voglio',
+                link: 'https://www.telepass.com/it/privati/offerte/telepass-pay-per-use',
+                cb_s: null,
+                s_m: 7
+            }
+        }
+
+        var cards_css = {
+            plus: {
+                upper: 'plus-upper',
+                label: 'plus-label',
+                internal: 'internal-label',
+                canone: 'canone-plus',
+                button: 'b-plus',
+                bottom: 'under-plus',
+                cb_s: ''
+            },
+            base: {
+                upper: 'base-upper',
+                label: '',
+                internal: '',
+                canone: 'canone-base',
+                button: 'b-base',
+                bottom: 'under-base',
+                cb_s: ''
+            },
+            ppu: {
+                upper: 'base-upper',
+                label: '',
+                internal: '',
+                canone: 'canone-base',
+                button: 'b-base',
+                bottom: 'under-base',
+                cb_s: 'cb-s-null'
+            }
+        }
+
+        Object.keys(cards_info).forEach(key => {
+            //upper card
+            var card = document.createElement('div');
+            var label = '';
+            if(key == 'plus'){
+                card.id = 'card-jkl-tp-plus';
+                label = '<div class="'+ cards_css[key]['label'] +'"><span class="'+ cards_css[key]['internal'] +'">'+ cards_info[key]['label'] +'<span></div>';
+            }
+            var cashback_sconti = '';
+            if(key == 'ppu'){
+                cashback_sconti = '<div class="cb-s-null"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.2258 16.0003L24.4856 8.74052C24.8241 8.40198 24.8241 7.8538 24.4856 7.51526C24.1471 7.17672 23.5976 7.17672 23.259 7.51526L15.9999 14.7744L8.74015 7.51526C8.40161 7.17672 7.85343 7.17672 7.51489 7.51526C7.17635 7.8538 7.17635 8.40198 7.51489 8.74052L14.774 16.0003L7.51489 23.2594C7.17635 23.5979 7.17635 24.1474 7.51489 24.486C7.68416 24.6552 7.90552 24.7399 8.12752 24.7399C8.34953 24.7399 8.57088 24.6552 8.74015 24.486L15.9999 17.2262L23.259 24.486C23.4283 24.6552 23.651 24.7399 23.8723 24.7399C24.0937 24.7399 24.3163 24.6552 24.4856 24.486C24.8241 24.1474 24.8241 23.5979 24.4856 23.2594L17.2258 16.0003Z" fill="#EE0125"/></svg></div>';
+            }else{
+                cashback_sconti = '<div class="subtitles-d">'+ cards_info[key]['cb_s'] +'</div>';
+            }
+            var upper_card = `
+                <div class="${cards_css[key]['upper']} card-upper">
+                    ${label}
+                    <div class="card-offer-title upper-spacing">${cards_info[key]['type']}</div>
+                    <div class="canone ${cards_css[key]['canone']} upper-spacing">${cards_info[key]['canone']}</div>
+                    <div class="up-desc upper-spacing">${cards_info[key]['sub']}</div>
+                    <div class="upper-spacing" style="display: flex; justify-content: center;" data-tracking="${key}_det_hp" onclick="goToTheOffer('${cards_info[key]['link']}', '${key}');"><span class="button-cards ${cards_css[key]['button']}">${cards_info[key]['button']}</span></div>
+                </div>
+            `;
+            var under_card = `
+                <div class="card-under ${cards_css[key]['bottom']}">
+                    <div class="subtitles-t">Servizi di mobilità</div>
+                    <div class="services">${cards_info[key]['s_m']}</div>
+                    <hr class="bottom-divider"/>
+                    <div class="subtitles-t">Cashback e sconti</div>
+                    ${cashback_sconti}
+                </div>
+            `;
+            card.classList.add('card-offer');
+            card.innerHTML = upper_card + under_card;
+            f.insertBefore(card, h);
+            var section_title = document.querySelector('h1.master-editorial__title');
+            var section_description = document.querySelector('div.master-editorial__description > p');
+
+            section_title.innerHTML = 'Scegli l\'offerta che fa per te';
+            section_description.innerHTML = 'il dispositivo per il telepedaggio è sempre incluso.';
+        })
+        }
+        
+
+    }
+    function goToTheOffer(link, offer){
+        dataLayer.push({'event': 'click_cta'});
+        window.location.href = link;
+    }
+
+    var existingStyle = document.getElementById('style-javascript-tpass-jkl');
+if (!existingStyle) {
+    var styleElement = document.createElement('style');
+    styleElement.id = 'style-javascript-tpass-jkl';
+    styleElement.textContent = `
+        .container-cards-jkl{
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+        }
+        .card-offer{
+            box-shadow: 0px 4px 8px 0px rgba(0,39,82, 0.14);
+            width: calc((100% / 3) - 20px);
+            background: none
+        }
+
+        /* Parte superiore della card */
+        .card-offer-title{
+            font-weight: 600;
+            font-size: 23px;
+            text-align: center;
+        }
+        .button-cards{
+            padding: 12.5px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .b-base{
+            color: #002752;
+            background-color: #E2EEFD;
+        }
+        .b-plus{
+            color: white;
+            background-color: #0071eb;
+        }
+        .plus-label{
+            position: absolute;
+            top: -15px;
+            left: 0px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .internal-label{
+            color: white;
+            background-color: #0057b7;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            padding: 5px 15px;
+        }
+
+        .card-upper{
+            display: flex; 
+            flex-direction: column;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 25px;
+        }
+        .plus-upper{
+            background-color: #002752;
+            color: white;
+            position: relative;
+        }
+        .base-upper{
+            background-color: white;
+            color: #002752;
+        }
+        
+        .canone{
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .canone-plus{
+            color: #fee01a;
+        }
+        .canone-base{
+            color: #0071eb;
+        }
+
+        .up-desc{
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .upper-spacing{
+            margin-top: 15px;
+        }
+
+        @media screen and (max-width: 991px){
+            .card-offer{
+                box-shadow: 0px 4px 8px 0px rgba(0,39,82, 0.14);
+                width: calc(50% - 20px);
+                background: none;
+            }
+        }
+
+        @media screen and (max-width: 699px){
+            .card-offer{
+                width: 80%;
+                margin-bottom: 10px;
+            }
+            .container-cards-jkl{
+                display: flex;
+                flex-direction: column;
+                justify-content: unset;
+                align-items: center;
+            }
+        }
+        @media screen and (max-width: 530px){
+            .card-offer{
+                width: 90%;
+            }
+        }
+        @media screen and (max-width: 475px){
+            .card-offer{
+                width: 100%;
+            }
+        }
+
+        /* Parte inferiore della card */
+
+        .card-under{
+            padding: 25px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+        }
+        .under-plus{
+            background-color: #E2EEFD;
+        }
+        .under-base{
+            background-color: white;
+        }
+
+        .subtitles-t{
+            color: #002752;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .subtitles-d{
+            color: #5D6468;
+            font-size: 14px;
+        }
+        .bottom-divider{
+            border-top: 1px solid #c8ced6;
+            margin: 12.5px 0;
+        }
+        .services{
+            font-size: 22px;
+            font-weight: 600;
+            text-align: right;
+            color: #0057b7;
+        } 
+        .cs-s{
+            font-size: 14px;
+            color: #5d6468;
+        }
+        .cb-s-null{
+            display: flex;
+            justify-content: center;
+            width: 100%;
+
+        }
+        
+    `;
+    document.head.appendChild(styleElement);
+}
+
+
+</script>
+
+

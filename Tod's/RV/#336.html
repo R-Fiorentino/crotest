@@ -1,0 +1,137 @@
+<script>
+  var style = document.createElement('style');
+style.textContent = `
+.guide-size-info {
+  background-color: #F2F2F2;
+}
+.guide-size-info-desktop {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  background-color: #F2F2F2;
+}
+.table thead.size-head th {
+  border-bottom: 0;
+}
+.size-info {
+  background-color: #F2F2F2;
+}
+@media screen and (min-width: 769px){
+  #size-guide-layer-trigger span {
+    text-decoration: underline;
+  }
+}
+`;
+document.head.appendChild(style);
+
+function createSizeInfoDiv(className, textContent) {
+  let sizeInfoDiv = document.createElement('div');
+  sizeInfoDiv.className = className;
+  sizeInfoDiv.style.display = 'flex';
+  sizeInfoDiv.style.justifyContent = 'flex-start';
+  sizeInfoDiv.style.textAlign = 'left';
+  sizeInfoDiv.style.padding = '10px';
+  sizeInfoDiv.style.width = '100%';
+  sizeInfoDiv.style.boxSizing = 'border-box';
+
+  let svgIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svgIcon.setAttribute('width', '18');
+  svgIcon.setAttribute('height', '10');
+  svgIcon.setAttribute('viewBox', '0 0 18 10');
+  svgIcon.setAttribute('fill', 'none');
+  svgIcon.style.marginRight = '10px';
+  svgIcon.style.marginTop = '4px';
+
+  let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  svgPath.setAttribute('d', 'M1.61538 10C1.15513 10 0.770833 9.84583 0.4625 9.5375C0.154167 9.22917 0 8.84488 0 8.38463V1.61537C0 1.15512 0.154167 0.770833 0.4625 0.4625C0.770833 0.154167 1.15513 0 1.61538 0H16.3846C16.8449 0 17.2292 0.154167 17.5375 0.4625C17.8458 0.770833 18 1.15512 18 1.61537V8.38463C18 8.84488 17.8458 9.22917 17.5375 9.5375C17.2292 9.84583 16.8449 10 16.3846 10H1.61538ZM1.61538 9H16.3846C16.5385 9 16.6795 8.9359 16.8077 8.8077C16.9359 8.67948 17 8.53846 17 8.38463V1.61537C17 1.46154 16.9359 1.32052 16.8077 1.1923C16.6795 1.0641 16.5385 1 16.3846 1H13.5V4.23078H12.5V1H9.5V4.23078H8.5V1H5.5V4.23078H4.5V1H1.61538C1.46154 1 1.32052 1.0641 1.1923 1.1923C1.0641 1.32052 1 1.46154 1 1.61537V8.38463C1 8.53846 1.0641 8.67948 1.1923 8.8077C1.32052 8.9359 1.46154 9 1.61538 9Z');
+  svgPath.setAttribute('fill', 'black');
+  svgIcon.appendChild(svgPath);
+
+  let text = document.createElement('span');
+  text.innerHTML = textContent;
+  text.style.fontSize = '14px';
+  text.style.lineHeight = '1.2';
+  text.style.flexGrow = '1';
+  text.style.fontWeight = '300';
+
+  sizeInfoDiv.appendChild(svgIcon);
+  sizeInfoDiv.appendChild(text);
+
+  return sizeInfoDiv;
+}
+
+var dataLayer = window.dataLayer || [];
+var language = dataLayer[0]?.language || 'en';  // Default to 'en' if language is not found
+var sizeInfoText;
+
+switch (language) {
+  case 'it':
+    sizeInfoText = 'Si consiglia di scegliere mezza misura in meno rispetto alla misura abituale';
+    break;
+  case 'fr':
+    sizeInfoText = 'Il est conseillé de choisir une demi-pointure en dessous de votre pointure habituelle';
+    break;
+  case 'de':
+    sizeInfoText = 'Wir empfehlen, dieses Modell in einer halben Schuhgröße unter Ihrer normalen Größe zu wählen';
+    break;
+  case 'en':
+    sizeInfoText = 'Fits large to size, take a half size smaller than normal';
+    break;
+  case 'es':
+    sizeInfoText = 'Recomendamos elegir media talla menos de la habitual';
+    break;
+  default:
+    sizeInfoText = 'Fits large to size, take a half size smaller than normal';
+    break;
+}
+
+function insertSizeInfoDivs() {
+  let headerRows = document.querySelectorAll('.size-chc__sizes');
+  if (headerRows.length > 1) {
+    let secondHeaderRow = headerRows[1];
+    let sizeInfoDiv = createSizeInfoDiv('guide-size-info-desktop', sizeInfoText);
+    if (!secondHeaderRow.querySelector('.guide-size-info-desktop')) {
+      secondHeaderRow.prepend(sizeInfoDiv);
+    }
+  } else {
+  }
+}
+
+function insertModalSizeInfo() {
+  let modal = document.querySelector('.Popin-sizes .Popin-sizes-content .sizeguide-content');
+  if (modal) {
+    let modalSizeInfoDiv = createSizeInfoDiv('guide-size-info', sizeInfoText);
+    modalSizeInfoDiv.style.margin = '0 0 20px 0';
+    let modalTitle = modal.querySelector('h1');
+    if (modalTitle && !modal.querySelector('.guide-size-info')) {
+      modalTitle.insertAdjacentElement('afterend', modalSizeInfoDiv);
+    }
+  }
+}
+
+function insertMobileSizeInfo() {
+  let modalHeader = document.querySelector('.size-slc-popin__content .size-chc');
+  if (modalHeader) {
+    let mobileSizeInfoDiv = createSizeInfoDiv('size-info', sizeInfoText);
+    if (!modalHeader.querySelector('.size-info')) {
+      modalHeader.prepend(mobileSizeInfoDiv);
+    }
+  }
+}
+
+function observeMutations(targetNode, callback) {
+  const observer = new MutationObserver(callback);
+  const config = { childList: true, subtree: true };
+  observer.observe(targetNode, config);
+}
+
+// Insert the size info divs for desktop and modal
+insertSizeInfoDivs();
+insertModalSizeInfo();
+
+// Use MutationObserver to handle the mobile size info insertion
+const bodyNode = document.body;
+observeMutations(bodyNode, function() {
+  insertMobileSizeInfo();
+});
+
+</script>

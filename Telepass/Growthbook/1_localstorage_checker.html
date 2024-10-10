@@ -1,0 +1,59 @@
+<script>
+    function getDomainKey() {
+      return 'gb_domain';
+    }
+    
+    function salvaChiave() {
+      var gbTimestamp = localStorage.getItem('gb_timestamp');
+      if (!gbTimestamp) {
+        var ora = new Date().getTime();
+        localStorage.setItem('gb_timestamp', JSON.stringify({
+          valore: 'visita_timestamp',
+          timestamp: ora
+        }));
+      }
+    }
+    
+    
+    function removeLocalStorageItems() {
+      if (typeof localStorage === 'undefined') {
+        return;
+      }
+    
+      // Rimuove la chiave gb_domain dal localStorage
+      var domainKey = getDomainKey();
+      localStorage.removeItem(domainKey);
+    
+      // Rimuove le chiavi globali separatamente
+      var globalKeysToRemove = ['gbFeaturesCache', 'gb_timestamp', 'growthbook_timestamp'];
+      globalKeysToRemove.forEach(function(key) {
+        if (localStorage.getItem(key) !== null) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+    
+    function verificaERimuoviChiave() {
+      var dati = localStorage.getItem('gb_timestamp');
+    
+      if (dati) {
+        var datiParsed = JSON.parse(dati);
+        var oraCorrente = new Date().getTime();
+        var mesiTrascorsi = (oraCorrente - datiParsed.timestamp) / (30 * 24 * 60 * 60 * 1000);
+    
+        if (mesiTrascorsi > 6) { 
+          removeLocalStorageItems();
+          console.log('LocalStorage cleared');
+        } else {
+          console.log('LS not cleared < 6m');
+        }
+      } else {
+        console.log('No timestamp key found.');
+      }
+    }
+    
+    salvaChiave();
+    verificaERimuoviChiave();
+    
+</script>
+    

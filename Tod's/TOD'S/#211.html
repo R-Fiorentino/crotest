@@ -1,0 +1,43 @@
+<script>
+    var domain = 'https://www.tods.com/';
+var isLoggedElement = document.querySelector('.isLogged');
+var modalH3 = document.querySelector('#monetate_allinone_lightbox h3');
+var modalH4 = document.querySelector('#monetate_allinone_lightbox h4');
+var modalCta = document.querySelector('#monetate_allinone_lightbox .container-cta .popup-cta');
+var modalLinkElement = document.querySelector('#monetate_allinone_lightbox .container-cta a');
+var siteLanguage = extractLanguageFromURL();
+var checkoutUrl;
+
+if (siteLanguage == 'de-de') {
+  modalH3.innerHTML = 'Willkommen zurück!';
+  modalH4.innerHTML = 'Es ist noch etwas im Warenkorb geblieben. Möchten Sie Ihren Einkauf abschließen?';
+  modalCta.innerHTML = 'Zur Kasse';
+} else if (siteLanguage == 'us-en') {
+  modalH3.innerHTML = 'Welcome back!';
+  modalH4.innerHTML = 'You left something in your cart. Do you wish to proceed with the purchase?';
+  modalCta.innerHTML = 'Go to checkout';
+}
+
+if (isLoggedElement) {
+  checkoutUrl = domain + siteLanguage + '/checkout-1/';
+} else {
+  checkoutUrl = domain + siteLanguage + '/checkout-login/';
+}
+
+modalLinkElement.href = checkoutUrl;
+
+// Funzione per estrarre la prima parte del percorso dall'URL
+function extractLanguageFromURL() {
+  var url = window.location.href;
+
+  var index = url.indexOf('/', domain.length);
+  if (index !== -1) {
+    var path = url.substring(domain.length, index);
+    var parts = path.split("/");
+    if (parts.length > 0) {
+      return parts[0];
+    }
+  }
+  return null;
+}
+</script>

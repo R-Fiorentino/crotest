@@ -1,0 +1,86 @@
+<script>
+    var swipers = document.querySelectorAll('.swiper');
+var swiperContainer = swipers[0].querySelector('.swiper-container');
+var swiperWrapper = swipers[0].querySelector('.swiper-wrapper');
+var swiperSlider = swiperContainer.swiper;
+var slides = swiperSlider.slides;
+var indossato;
+var indossato_index;
+
+for (let i = 0; i < slides.length; i++) {
+    const slide = slides[i];
+    const images = slide.querySelectorAll('img');
+    images.forEach(function(image) {
+        if (image.src.includes("-20.jpg")) {
+            indossato = slide;
+            indossato_index = i;
+        }
+    });
+}
+
+var slide1Picture = indossato.querySelector('picture');
+var slide2Picture = slides[1].querySelector('picture');
+var swapFlag = false;
+
+swapPictures();
+swapThumbnails();
+
+var observer = new MutationObserver(function(mutations) {
+    var modal = document.querySelector('#zoom-modal');
+    if (mutations.length > 1 && modal) {
+        swapThumbnails();
+    }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
+
+function swapPictures() {
+    if (!slide1Picture.dataset.swapped) {
+      const slide1PictureContent = slide1Picture.innerHTML;
+      slide1Picture.innerHTML = slide2Picture.innerHTML;
+      slide2Picture.innerHTML = slide1PictureContent;
+      slide1Picture.dataset.swapped = true;
+      slide2Picture = slides[1].querySelector('picture');
+    }
+}
+
+function swapThumbnails() {
+    var modal = document.querySelector('#zoom-modal');
+    if (modal) {
+        var thumbnails = modal.querySelectorAll('.gallery-thumbnails__item');
+        let indossatoIndex = -1;
+        for (let i = 0; i < thumbnails.length; i++) {
+            const img = thumbnails[i].querySelector('img');
+            if (img && img.src.includes('-20.jpg')) {
+                indossatoIndex = i;
+                break;
+            }
+        }
+
+        if (indossatoIndex !== -1 && indossatoIndex !== 1) {
+            const thumbnailContainer = thumbnails[indossatoIndex];
+            const galleryContainer = thumbnailContainer.parentElement;
+            const secondThumbnail = thumbnails[1];
+            galleryContainer.insertBefore(thumbnailContainer, secondThumbnail);
+        }
+    }
+}
+
+observer = new MutationObserver(function(mutations) {
+    mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+            if (node.id === 'zoom-modal') {
+                swapThumbnails();
+                setTimeout(swapThumbnails, 500); 
+            }
+        });
+    });
+});
+
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+</script>

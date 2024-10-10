@@ -1,0 +1,33 @@
+<script>
+    (function() {
+        function cloneAndReplace(originalSelector, targetSelector, insertMethod) {
+            const original = document.querySelector(originalSelector);
+            const clone = original.cloneNode(true);
+            const target = document.querySelector(targetSelector);
+            if (insertMethod) {
+                insertMethod(target, clone);
+            } else {
+                target.innerHTML = '';
+                target.appendChild(clone);
+            }
+            original.style.display = 'none';
+            clone.addEventListener('click', (e) => {
+                e.preventDefault();
+                original.click();
+            });
+        }
+    
+        // ATTIVA ORA
+        cloneAndReplace(
+            '.button-event[data-tracking="EV_Attiva_Online"]',
+            '.hero-info .button-wrapper a'
+        );
+    
+        // DIMMI DI PIU
+        cloneAndReplace(
+            '.button.button-lighter[data-tracking="EV_Scopri"]',
+            '.hero-box .wrap-btn-container .button-wrapper',
+            (target, clone) => target.insertBefore(clone, target.firstChild)
+        );
+    })();
+    </script>

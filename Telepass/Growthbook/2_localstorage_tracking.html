@@ -1,0 +1,159 @@
+<script>
+// Funzione per ottenere il dominio
+function getDomainKey() {
+  return 'gb_domain';
+}
+
+
+// Funzione per ottenere la chiave dell'URL
+    function getUrlKey() {
+        var url = window.location.href;
+        var sanitizedUrl = url.replace(window.location.search, '') // Rimuove la query string
+                             .replace(window.location.hash, '') // Rimuove l'ancora
+                             .replace(window.location.protocol + '//', ''); // Rimuove il protocollo
+        return sanitizedUrl;
+    }
+
+    // Funzione per salvare i dati nel local storage
+    function salvaDatiLocalStorage(chiave, dati, isDomain) {
+        var domainKey = getDomainKey();
+        var datiSalvati = JSON.parse(localStorage.getItem(domainKey) || '{}');
+
+        if (isDomain) {
+            datiSalvati[chiave] = dati;
+        } else {
+            var urlKey = getUrlKey();
+            if (!datiSalvati.pages) datiSalvati.pages = {};
+            if (!datiSalvati.pages[urlKey]) datiSalvati.pages[urlKey] = {};
+            datiSalvati.pages[urlKey][chiave] = dati;
+        }
+
+        localStorage.setItem(domainKey, JSON.stringify(datiSalvati));
+    }
+
+    // Funzione per leggere i dati dal local storage
+  function leggiDatiLocalStorage(chiave, isDomain) {
+    var domainKey = getDomainKey();
+    var datiSalvati = JSON.parse(localStorage.getItem(domainKey) || '{}');
+
+    if (isDomain) {
+        return datiSalvati ? datiSalvati[chiave] : null;
+    } else {
+        var urlKey = getUrlKey();
+        if (datiSalvati && datiSalvati.pages && datiSalvati.pages[urlKey]) {
+            return datiSalvati.pages[urlKey][chiave];
+        } else {
+            return null;
+        }
+    }
+}
+
+
+    // Funzione per aggiornare le visite
+    function aggiornaVisite() {
+        var dataCorrente = new Date();
+
+        // Gestione visite dominio
+        var ultimaVisitaDominio = leggiDatiLocalStorage('gb_data_visita', true) ? new Date(leggiDatiLocalStorage('gb_data_visita', true)) : null;
+        var differenzaOreDominio = ultimaVisitaDominio ? (dataCorrente - ultimaVisitaDominio) / 36e5 : null;
+
+        if (!ultimaVisitaDominio || differenzaOreDominio >= 1) {
+            salvaDatiLocalStorage('gb_data_visita', dataCorrente.toISOString(), true);
+
+            var contatoreVisiteDominio = parseInt(leggiDatiLocalStorage('gb_contatore_visite', true), 10) || 0;
+            salvaDatiLocalStorage('gb_contatore_visite', contatoreVisiteDominio + 1, true);
+        }
+
+        // Gestione visite pagina
+        var ultimaVisitaPagina = leggiDatiLocalStorage('gb_data_visita') ? new Date(leggiDatiLocalStorage('gb_data_visita')) : null;
+        var differenzaOrePagina = ultimaVisitaPagina ? (dataCorrente - ultimaVisitaPagina) / 36e5 : null;
+
+        if (!ultimaVisitaPagina || differenzaOrePagina >= 1) {
+            salvaDatiLocalStorage('gb_data_visita', dataCorrente.toISOString());
+
+            var contatoreVisitePagina = parseInt(leggiDatiLocalStorage('gb_contatore_visite'), 10) || 0;
+            salvaDatiLocalStorage('gb_contatore_visite', contatoreVisitePagina + 1);
+        }
+    }
+
+    // Funzione per aggiornare l'altezza dello scroll
+    function aggiornaScrollHeight() {
+        var ultimoScroll = 0;
+
+        window.addEventListener('scroll', function() {
+            var altezzaPagina = document.documentElement.scrollHeight;
+            var altezzaVisibile = window.innerHeight;
+            var posizioneScroll = window.pageYOffset || document.documentElement.scrollTop;
+            var percentualeScroll = (posizioneScroll / (altezzaPagina - altezzaVisibile)) * 100;
+            var percentualeArrotondata = Math.round(percentualeScroll * 100) / 100;
+
+            if (percentualeArrotondata > ultimoScroll) {
+                ultimoScroll = percentualeArrotondata;
+                salvaDatiLocalStorage('gb_scroll_height', percentualeArrotondata.toString());
+            }
+        });
+    }
+
+    // Funzione per aggiornare il tempo di permanenza
+    function aggiornaTempoPermanenza() {
+        // Variabile per tenere traccia dell'orario di caricamento della pagina
+        var startTime;
+        // Variabile per tenere traccia del tempo totale di permanenza
+        var totalTime = 0;
+
+        // Funzione per aggiornare il tempo totale di permanenza
+        function updateTotalTime() {
+            if (startTime) {
+                totalTime += (new Date().getTime() - startTime);
+                startTime = null;
+            }
+        }
+
+        startTime = new Date().getTime();
+
+        // Evento 'beforeunload' per aggiornare il tempo di permanenza prima che l'utente lasci la pagina
+        window.addEventListener('beforeunload', function() {
+            updateTotalTime();
+            salvaDatiLocalStorage('gb_tempo_permanenza', totalTime / 1000);
+            console.log('Tempo totale di permanenza:', totalTime / 1000, 'secondi');
+        });
+
+        // Evento 'visibilitychange' per aggiornare il tempo di permanenza quando l'utente cambia tab
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                updateTotalTime();
+            } else if (document.visibilityState === 'visible') {
+                startTime = new Date().getTime();
+            }
+        });
+    }
+
+    // Funzione per tracciare i click sugli elementi con data-tracking
+    function tracciaClick() {
+        document.querySelectorAll('[data-tracking]').forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                var dataTracking = element.getAttribute('data-tracking');
+                var dataClick = new Date().toISOString();
+                var clickData = dataTracking + '|' + dataClick;
+
+                var urlKey = getUrlKey();
+                var domainKey = getDomainKey();
+                var datiSalvati = JSON.parse(localStorage.getItem(domainKey) || '{}');
+
+                if (!datiSalvati.pages) datiSalvati.pages = {};
+                if (!datiSalvati.pages[urlKey]) datiSalvati.pages[urlKey] = {};
+                if (!datiSalvati.pages[urlKey].clicks) datiSalvati.pages[urlKey].clicks = [];
+                
+                datiSalvati.pages[urlKey].clicks.push(clickData);
+                localStorage.setItem(domainKey, JSON.stringify(datiSalvati));
+            });
+        });
+    }
+
+    // Chiamata delle funzioni di aggiornamento
+    aggiornaVisite();
+    aggiornaScrollHeight();
+    aggiornaTempoPermanenza();
+    tracciaClick();
+</script>
+

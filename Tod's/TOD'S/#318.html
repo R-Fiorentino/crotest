@@ -1,0 +1,87 @@
+<script>
+    var dataLayer = window.dataLayer || [];
+    var country = dataLayer[0].country;
+    var language = dataLayer[0].language;
+
+    var titleText = 'Accedi al tuo account Tod\'s';
+    var captionText = 'Accedi al tuo account Tod\'s per visualizzare <strong>contenuti personalizzati</strong> e ottenere la <strong>spedizione express gratuita</strong>';
+    var buttonData = ['Accedi', 'https://www.tods.com/' + country + '-' + language + '/register/'];
+
+    switch (language) {
+        case 'it':
+            titleText = 'Accedi al tuo account Tod\'s';
+            captionText = 'Accedi al tuo account Tod\'s per visualizzare <strong>contenuti personalizzati</strong> e ottenere la <strong>spedizione express gratuita</strong>';
+            buttonData = ['Accedi', 'https://www.tods.com/' + country + '-' + language + '/register/'];
+            break;
+        case 'fr':
+            titleText = 'Connectez-vous à votre compte Tod\'s';
+            captionText = 'Connectez-vous à votre compte Tod\'s pour visualiser des <strong>contenus personnalisés</strong> et bénéficier de la <strong>livraison express gratuite</strong>';
+            buttonData = ['Se connecter', 'https://www.tods.com/' + country + '-' + language + '/register/'];
+            break;
+        case 'de':
+            titleText = 'Melden Sie sich bei Ihrem Tod\'s-Konto an';
+            captionText = 'Melden Sie sich bei Ihrem Tod\'s-Konto an, um <strong>personalisierte Inhalte</strong> anzuschauen und <strong>kostenlosen Express versand</strong> zu erhalten';
+            buttonData = ['Einloggen', 'https://www.tods.com/' + country + '-' + language + '/register/'];
+            break;
+        case 'en':
+            titleText = 'Sign in to your Tod\'s account';
+            captionText = 'Sign in to your Tod\'s account to view <strong>personalized content</strong> and get <strong>free express shipping</strong>';
+            buttonData = ['Log in', 'https://www.tods.com/' + country + '-' + language + '/register/'];
+            break;
+        default:
+            break;
+    }
+
+    var isLogged = document.querySelector('.isLogged');
+
+    if(!isLogged) {
+        var styleExists = document.getElementById('new-registrazione');
+        var styleEl = document.createElement('style');
+        styleEl.id = 'new-registrazione';
+        styleEl.innerHTML = `
+        .new-registrazione {
+            background-color: #f39f0a!important;
+        }
+        @media (min-width: 768px) {
+            .newsletter.modal .modal-dialog {
+                max-width: 480px;
+            }
+        }
+        .new-registrazione .new-button {
+            background-color: black!important;
+            margin-top: 15px;
+        }
+        .new-registrazione .new-button .btn-text-anim {
+            color: white!important;
+        }
+        .new-registrazione .modal-close {
+            border-bottom: 2px solid black;
+        }
+        `;
+
+        if(!styleExists) {
+            document.head.appendChild(styleEl);
+        }
+        
+        var modal = document.querySelector('.newsletter.modal');
+        var modalContent = modal.querySelector('.modal-content');
+        var title = modalContent.querySelector('.title-main');
+        var caption = modalContent.querySelector('.newsletter-main');
+        var newButton = '<a href="' + buttonData[1] + '" class="btn btn-primary new-button"><div class="btn-text-anim">'+ buttonData[0] +'</div></a>';
+        title.innerText = titleText;
+        caption.innerHTML = '<div class="caption">' + captionText + '</div>' + newButton;
+        modalContent.classList.add('new-registrazione');
+
+        var newButton = modalContent.querySelector('.new-button');
+        if (newButton) {
+            newButton.addEventListener('click', function() {
+                dataLayer.push({
+                    event: 'GAevent',
+                    eventCategory: 'click_popup_accedi',
+                    eventAction: 'click_accedi'
+                });
+            });
+        }
+    }
+
+</script>

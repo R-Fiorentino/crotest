@@ -1,0 +1,150 @@
+<script>
+    var style = document.createElement('style');
+style.textContent = `
+.guide-size-info {
+  background-color: #F2F2F2;
+}
+
+.table thead.size-head th {
+  border-bottom: 0;
+}
+
+.size-info {
+  border-bottom: 1px solid #999;
+}
+
+@media screen and (min-width: 769px){
+#size-guide-layer-trigger span {
+  text-decoration: underline;
+}
+}
+
+`;
+document.head.appendChild(style);
+
+function createSizeInfoDiv(className, textContent) {
+    let sizeInfoDiv = document.createElement('div');
+    sizeInfoDiv.className = className;
+    sizeInfoDiv.style.display = 'flex';
+    sizeInfoDiv.style.justifyContent = 'flex-start';
+    sizeInfoDiv.style.textAlign = 'left';
+    sizeInfoDiv.style.padding = '10px';
+    sizeInfoDiv.style.width = '100%';
+    sizeInfoDiv.style.boxSizing = 'border-box';
+
+    let svgIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgIcon.setAttribute('width', '18');
+    svgIcon.setAttribute('height', '10');
+    svgIcon.setAttribute('viewBox', '0 0 18 10');
+    svgIcon.setAttribute('fill', 'none');
+    svgIcon.style.marginRight = '10px';
+    svgIcon.style.marginTop = '4px';
+
+    let svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    svgPath.setAttribute('d', 'M1.61538 10C1.15513 10 0.770833 9.84583 0.4625 9.5375C0.154167 9.22917 0 8.84488 0 8.38463V1.61537C0 1.15512 0.154167 0.770833 0.4625 0.4625C0.770833 0.154167 1.15513 0 1.61538 0H16.3846C16.8449 0 17.2292 0.154167 17.5375 0.4625C17.8458 0.770833 18 1.15512 18 1.61537V8.38463C18 8.84488 17.8458 9.22917 17.5375 9.5375C17.2292 9.84583 16.8449 10 16.3846 10H1.61538ZM1.61538 9H16.3846C16.5385 9 16.6795 8.9359 16.8077 8.8077C16.9359 8.67948 17 8.53846 17 8.38463V1.61537C17 1.46154 16.9359 1.32052 16.8077 1.1923C16.6795 1.0641 16.5385 1 16.3846 1H13.5V4.23078H12.5V1H9.5V4.23078H8.5V1H5.5V4.23078H4.5V1H1.61538C1.46154 1 1.32052 1.0641 1.1923 1.1923C1.0641 1.32052 1 1.46154 1 1.61537V8.38463C1 8.53846 1.0641 8.67948 1.1923 8.8077C1.32052 8.9359 1.46154 9 1.61538 9Z');
+    svgPath.setAttribute('fill', 'black');
+    svgIcon.appendChild(svgPath);
+
+    let text = document.createElement('span');
+    text.innerHTML = textContent;
+    text.style.fontSize = '14px';
+    text.style.lineHeight = '1.2';
+    text.style.flexGrow = '1';
+    text.style.fontWeight = '300';
+
+    sizeInfoDiv.appendChild(svgIcon);
+    sizeInfoDiv.appendChild(text);
+
+    return sizeInfoDiv;
+}
+var dataLayer = window.dataLayer || [];
+var language = dataLayer[0].language || 'en';  // Default to 'en' if language is not found
+
+var sizeInfoText;
+var sizeGuideText;
+
+switch (language) {
+    case 'it':
+        sizeInfoText = 'Vestibilità ampia: ti consigliamo mezzo numero in meno';
+        sizeGuideText = 'Questo articolo ha una vestibilità ampia. Ti consigliamo di scegliere mezza taglia in meno';
+        break;
+    case 'fr':
+        sizeInfoText = 'Taille grand: nous vous conseillons de prendre une demi-pointure en moins';
+        sizeGuideText = 'Cet article taille grand. Nous vous conseillons de choisir une demi-pointure en moins.';
+        break;
+    case 'de':
+        sizeInfoText = 'Weite Passform: Wir empfehlen eine halbe Nummer kleiner';
+        sizeGuideText = 'Dieser Artikel hat eine weite Passform. Wir empfehlen, eine halbe Nummer kleiner zu wählen.';
+        break;
+    case 'en':
+        sizeInfoText = 'Wide fit: we recommend half a size smaller';
+        sizeGuideText = 'This item has a wide fit. We recommend choosing half a size smaller.';
+        break;
+    case 'es':
+        sizeInfoText = 'Ajuste amplio: recomendamos medio número menos';
+        sizeGuideText = 'Este producto tiene un ajuste amplio. Recomendamos elegir media talla menos.';
+        break;
+    default:
+        sizeInfoText = 'Wide fit: we recommend half a size smaller';
+        sizeGuideText = 'This item has a wide fit. We recommend choosing half a size smaller.';
+        break;
+}
+function insertSizeInfoDivs() {
+    // Ensure the function is only run if elements are found
+    let headerRow = document.querySelector('.size-head tr');
+    if (!headerRow || headerRow.getAttribute('data-size-info-inserted') === 'true') return;
+
+
+
+    // Create and insert the first size info div
+    let newHeaderCell = document.createElement('th');
+    newHeaderCell.colSpan = 2;
+    newHeaderCell.style.padding = '0';
+    newHeaderCell.style.width = '100%';
+    newHeaderCell.style.boxSizing = 'border-box';
+    let sizeInfoDiv = createSizeInfoDiv('size-info', sizeInfoText);
+    newHeaderCell.appendChild(sizeInfoDiv);
+    headerRow.insertAdjacentElement('afterend', newHeaderCell);
+
+    // Mark the header row as processed
+    headerRow.setAttribute('data-size-info-inserted', 'true');
+
+    // Create and insert the second size info div
+    let sizeGuideLayer = document.querySelector('.size-guide-layer .header');
+    if (sizeGuideLayer && !document.querySelector('.guide-size-info')) {
+        let guideSizeInfoDiv = createSizeInfoDiv('guide-size-info', sizeGuideText);
+        sizeGuideLayer.insertAdjacentElement('afterend', guideSizeInfoDiv);
+    }
+
+
+}
+
+    // Mobile handling
+    function insertMobileSizeInfo() {
+
+        let modalHeader = document.querySelector('#size-mobile-modal .modal-header');
+        if (modalHeader && !document.querySelector('#size-mobile-modal .modal-header + .size-info')) {
+
+            let mobileSizeInfoDiv = createSizeInfoDiv('size-info', sizeGuideText);
+            mobileSizeInfoDiv.style.backgroundColor = '#f2f2f2';
+            
+            mobileSizeInfoDiv.style.borderBottom = '0';
+            mobileSizeInfoDiv.style.margin = '0 auto';
+            mobileSizeInfoDiv.style.width = '90%';
+            mobileSizeInfoDiv.style.marginBottom = '30px';
+            modalHeader.insertAdjacentElement('afterend', mobileSizeInfoDiv);
+            console.log('Mobile size info div inserted');
+        }
+
+
+}
+
+// Event listener for button click
+document.querySelector('#pdp-size').addEventListener('click', () => {
+    console.log('#pdp-size button clicked');
+    setTimeout(insertMobileSizeInfo, 100);
+});
+// Initial run
+insertSizeInfoDivs();
+
+</script>

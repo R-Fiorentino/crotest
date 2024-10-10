@@ -1,0 +1,85 @@
+<script>
+    // ---------------------------------------------------------------------- //
+    // SCRIPT VERIFICA CLICK CTA E CONDIZIONI LOCAL STORAGE
+    
+    function getDomainKey() {
+      return 'gb_domain';
+    }
+    
+    function getDatiPerUrl() {
+      var keyGenitore = getDomainKey();
+      var datiPerUrl = null;
+    
+      try {
+        datiPerUrl = JSON.parse(localStorage.getItem(keyGenitore) || '{}');
+      } catch (e) {
+        // Gestione silenziosa degli errori
+        datiPerUrl = {};
+      }
+    
+      return datiPerUrl && typeof datiPerUrl === 'object' ? datiPerUrl : {};
+    }
+    
+    function verificaCondizioni() {
+      var datiPerUrl = getDatiPerUrl();
+      var clicks = JSON.parse(datiPerUrl['gb_click_cta'] || '[]');
+      var dataLimite = new Date();
+      dataLimite.setDate(dataLimite.getDate() - 30);
+    
+      var haClickRecente = clicks.some(function(click) {
+        var parti = click.split('|');
+        var dataClick = new Date(parti[parti.length - 1]);
+        return parti[0] === 'EV_App_Telepass' && dataClick >= dataLimite;
+      });
+    
+      var variantId = datiPerUrl['gb_variant_id'];
+      var experimentId = datiPerUrl['gb_experiment_id'];
+      var haVariantOExperimentId = variantId !== undefined && experimentId !== undefined;
+    
+      if (haClickRecente) {
+        return haVariantOExperimentId;
+      } else {
+        return !haVariantOExperimentId;
+      }
+    }
+    
+    function visitCounter() {
+      var datiPerUrl = getDatiPerUrl();
+      var contatoreVisite = datiPerUrl['gb_contatore_visite'];
+      contatoreVisite = contatoreVisite ? parseInt(contatoreVisite, 10) : 0;
+      return contatoreVisite;
+    }
+    
+    var haClickSuEVAppTelepass = verificaCondizioni();
+    var valoreContatoreVisite = visitCounter();
+    
+    // ---------------------------------------------------------------------- //
+    // SCRIPT VERIFICA SE L'UTENTE NAVIGA DA MOBILE O DA DESKTOP - TRUE SE MOBILE
+      
+    function isMobile() {
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      var mobilePatterns = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      return mobilePatterns.test(userAgent);
+    }
+    var isUserOnMobile = isMobile();
+    
+    // ---------------------------------------------------------------------- //
+    // NUOVA FUNZIONE PER VERIFICARE LE CONDIZIONI NEL LOCAL STORAGE NUOOVO UTENTE + PLUS
+    
+    function isEligibleForTest() {
+      var datiPerUrl = getDatiPerUrl();
+      var contatoreVisite = datiPerUrl['gb_contatore_visite'];
+      var pages = datiPerUrl['pages'] || {};
+      
+      if (contatoreVisite === 1 || !pages.hasOwnProperty('www.telepass.com/it/privati/offerte/plus')) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
+    var isEligibleForTest = isEligibleForTest();
+    console.log(isEligibleForTest);
+    
+</script>
+    

@@ -1,0 +1,170 @@
+<script>
+    var dataLayer = window.dataLayer || [];
+    var login = dataLayer[0].login;
+    var location_and_language = dataLayer[0].country + '-' + dataLayer[0].language;
+    var language = dataLayer[0].language;
+    if(login == 'not-logged' && !document.getElementById('triangolo-jkl')){
+        var account = document.querySelector('.account-layer-trigger');
+        var notLogged = document.createElement('div');
+        account.style.position = 'relative';
+        notLogged.style.cssText = 'position: absolute; top: -5px; right: -13px; background-color: #DA954B; height: 10px; width: 10px; border-radius: 50px; opacity: 0;';
+
+        var Accedi = {
+            it: 'Accedi',
+            en: 'Login',
+            de: 'Anmeldung',
+            fr: 'Connectez-vous',
+            es: 'Inicia sesión',
+        };
+        var Registrati = {
+            it: 'Registrati',
+            en: 'Subscribe',
+            de: 'registrieren',
+            fr: 'inscrivez-vous',
+            es: 'suscríbete',
+        };
+        var Or = {
+            it: 'o',
+            en: 'or',
+            de: 'oder',
+            fr: 'ou',
+            es: 'o',
+        };
+        var End = {
+            it: 'per una esperienza personalizzata.',
+            en: 'for a customized experience.',
+            de: 'Sie sich für ein personalisiertes Erlebnis',
+            fr: 'pour une expérience personnalisée.',
+            es: 'para una experiencia personalizada',
+        };
+
+        var message = document.createElement('div');
+        message.innerHTML = '<div id="triangolo-jkl"></div><a style="text-decoration: underline;" href="https://www.hogan.com/'+ location_and_language +'/register/">'+ Accedi[language] +'</a> '+ Or[language] +' <a style="text-decoration: underline;" href="https://www.hogan.com/'+ location_and_language +'/register/">'+ Registrati[language] +'</a> '+ End[language];
+        message.style.cssText = 'color: white; background-color: black; padding: 10px; border-radius: 10px; position: absolute; bottom: -90px; left: 0; width: 180px; opacity: 0;';
+        account.appendChild(message);
+        account.appendChild(notLogged);
+
+        notLogged.animate([
+            {opacity: 1},
+            {opacity: 1}
+        ],{
+            duration: 200,
+            fill: 'forwards'
+        });
+        notLogged.style.opacity = 1;
+        message.animate([
+            {opacity: 1},
+            {opacity: 1}
+        ],{
+            duration: 200,
+            fill: 'forwards'
+        });
+        message.style.opacity = 1;
+        
+        let opacità = false;
+        let lastScrollTop = 0;
+        
+        document.addEventListener('scroll', function(){
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop) {
+                if(opacità === false){
+                    notLogged.animate([
+                        {opacity: 1},
+                        {opacity: 0}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    notLogged.style.opacity = 0;
+                    message.animate([
+                        {opacity: 1},
+                        {opacity: 0}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    message.style.opacity = 0;
+                    opacità = true;
+                }
+            } else {
+                if(opacità === true){
+                    notLogged.animate([
+                        {opacity: 0},
+                        {opacity: 1}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    notLogged.style.opacity = 1;
+                    message.animate([
+                        {opacity: 0},
+                        {opacity: 1}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    message.style.opacity = 1;
+                    opacità = false;
+                }
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        setTimeout(function(){
+            if(notLogged.style.opacity != 0){
+                notLogged.animate([
+                    {opacity: 1},
+                    {opacity: 1}
+                ],{
+                    duration: 200,
+                    fill: 'forwards'
+                });
+                notLogged.style.opacity = 0;
+                message.animate([
+                    {opacity: 1},
+                    {opacity: 1}
+                ],{
+                    duration: 200,
+                    fill: 'forwards'
+                });
+                message.style.opacity = 0;
+            }
+        }, 5000);
+
+    }
+
+    var existingStyle = document.getElementById('style-javascript-tpass-jkl');
+    if (!existingStyle) {
+        var styleElement = document.createElement('style');
+        styleElement.id = 'style-javascript-tpass-jkl';
+        styleElement.textContent = `
+            #login-or-register-jkl{
+                color: white; 
+                background-color: black; 
+                padding: 10px; 
+                border-radius: 10px; 
+                position: absolute; 
+                bottom: -90px; 
+                left: 0; 
+                width: 180px; 
+                opacity: 0;
+            }
+            .other-elements-container div{
+                text-transform: none !important;
+            }
+            #triangolo-jkl {
+                position: absolute;
+                right: 124px;
+                top: -10px;
+                width: 0;
+                height: 0;
+                line-height: 0;
+                border-bottom: 10px solid black;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+            }
+        `;
+        document.head.appendChild(styleElement);
+    }
+
+</script>

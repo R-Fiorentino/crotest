@@ -1,0 +1,161 @@
+<!-- TEST FAY #341 - Lo script qui sotto crea una cta sull'immagine prodotto che scrolla fino a completa il look -->
+
+<script>
+  (function () {
+    const getLanguageFromURL = () =>
+      (window.location.href.match(/-([a-z]{2})\//) || [, "en"])[1];
+
+    const translations = {
+      it: "Completa il tuo look",
+      en: "Complete your look",
+      es: "Completa tu look",
+      fr: "Complétez votre look",
+      de: "Vervollständigen Sie Ihren Look",
+    };
+
+    let wasHeaderInScrollDown = false;
+
+    const scrollToAnchor = () => {
+      const slider = document.querySelector(".ctl-slider");
+      const stickyContainer = document.querySelector(".cm-pdp-prod-mosaic");
+
+      if (!slider || !stickyContainer) return;
+
+      const offset = slider.offsetHeight + 140;
+      const targetPosition =
+        window.innerWidth < 768
+          ? slider.offsetTop - 100
+          : stickyContainer.getBoundingClientRect().bottom +
+            window.scrollY -
+            offset;
+
+      window.scrollTo({ top: targetPosition, behavior: "smooth" });
+    };
+
+    const updateTextPosition = () => {
+      if (window.innerWidth < 768) return;
+
+      const textDiv = document.querySelector(".sticky-text");
+      const slider = document.querySelector(".ctl-slider");
+      const elementInSlider = document.querySelector(".ctl-slider .prod-title");
+      const toolbar = document.querySelector(".cm-pdp-toolbar");
+      const header = document.querySelector("header");
+      const mediaBox = document.querySelector(".medias-box");
+
+      if (!textDiv || !slider || !header || !mediaBox) return;
+
+      const mediaBoxRect = mediaBox.getBoundingClientRect();
+      const isMediaBoxInView = mediaBoxRect.top <= 0 && mediaBoxRect.bottom > 0;
+      const isSliderInView =
+        elementInSlider.getBoundingClientRect().top < window.innerHeight &&
+        slider.getBoundingClientRect().bottom >= 0;
+
+      if (window.scrollY === 0) {
+        textDiv.style.visibility = "visible";
+        textDiv.style.opacity = "1";
+        textDiv.style.position = "absolute";
+        textDiv.style.top = "20px";
+        return;
+      }
+
+      textDiv.style.visibility = isMediaBoxInView ? "visible" : "hidden";
+      textDiv.style.opacity = isSliderInView ? "0" : "1";
+
+      if (header.classList.contains("hdr-wrp--scrl-down"))
+        wasHeaderInScrollDown = true;
+
+      let topPosition = "20px";
+
+      if (window.scrollY > 0) {
+        if (
+          wasHeaderInScrollDown &&
+          header.classList.contains("hdr-wrp--scrl-up")
+        ) {
+          topPosition = "calc(var(--header-height) + 20px)";
+        }
+
+        if (
+          toolbar &&
+          toolbar.classList.contains("show") &&
+          header.classList.contains("hdr-wrp--scrl-up")
+        ) {
+          topPosition = "calc(var(--header-height) + 60px)";
+        } else if (toolbar && toolbar.classList.contains("show")) {
+          topPosition = "60px";
+        }
+      }
+
+      textDiv.style.position =
+        isMediaBoxInView && !isSliderInView ? "fixed" : "absolute";
+      textDiv.style.top = isMediaBoxInView ? topPosition : "20px";
+    };
+
+    const addText = () => {
+      const mediaBox = document.querySelector(".medias-box");
+      const slider = document.querySelector(".ctl-slider");
+
+      if (!mediaBox || !slider) return;
+
+      const textDiv = document.createElement("div");
+      textDiv.classList.add("sticky-text");
+      textDiv.style = `
+      position:absolute;
+      top: 20px;
+      left:25px;
+      color:#16253F;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      background-color: #ffffffb3;
+      z-index:10;
+      gap:4px;
+      padding:5px 10px;
+      transition: top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    `;
+
+      const textSpan = document.createElement("span");
+      textSpan.style =
+        "font-size:14px;font-weight:300;text-decoration:underline;color:#16253f;";
+      textSpan.textContent =
+        translations[getLanguageFromURL()] || translations.en;
+
+      const svgIcon = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
+      svgIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      svgIcon.setAttribute("viewBox", "0 0 566.9 566.9");
+      svgIcon.style.width = "30px";
+      svgIcon.innerHTML = `
+      <defs>
+        <style>.cls-1 { fill: #16253f; stroke-width: 0px; }</style>
+      </defs>
+      <path class="cls-1" d="M438.6,316.5c0,25,0,49.9,0,74.9.1,27.6-22.4,49.2-50,49-49.4-.4-98.8-.4-148.2,0-27.4.2-49.9-21.3-49.9-48.8,0-47.4.1-94.8.3-142.3,0-6.7-.2-13.6,1.3-20,5-22.1,24.7-37.2,47.4-37.1,47.3,0,94.6.1,141.9.3,6.8,0,13.8-.2,20.4,1.3,21.9,5,37,24.6,36.9,47.1,0,12.6-.2,25.2-.2,37.8,0,12.6,0,25.2,0,37.8,0,0,.2,0,.3,0ZM314.4,416.1c22.8,0,45.7,0,68.5,0,3.7,0,7.5-.2,11.2-.8,11.1-1.6,17.9-8.4,19.5-19.6.5-3.3.8-6.7.8-10.1,0-46.3,0-92.6,0-138.9,0-3.4-.3-6.7-.8-10.1-1.6-10.7-7.5-17-18.1-19.1-4.2-.8-8.7-1.2-13-1.2-45.3,0-90.6,0-135.9,0-3.4,0-6.7.2-10.1.6-11.8,1.3-18.6,7.5-20.8,19.1-.8,3.9-1,7.9-1,11.9,0,45.5,0,91.1,0,136.6,0,3.2.2,6.5.6,9.7,1.4,12.3,8.4,19.4,20.6,21.1,3.4.5,7,.7,10.4.7,22.7,0,45.4,0,68.1,0Z"/>
+      <path class="cls-1" d="M250.5,128.4c24.9,0,49.9,0,74.8,0,16.7,0,30.1,7.1,40.1,20.4,4.4,5.8,3.4,13.3-2,17.3-5.6,4.2-13.1,2.9-17.3-3.4-5.1-7.6-12.9-9.3-21.1-10.1-1.9-.2-3.7-.1-5.6-.1-45.8,0-91.6,0-137.4,0-4.2,0-8.5.3-12.6,1.1-10.5,2.2-16.2,8.6-17.8,19.1-.5,3.2-.8,6.5-.8,9.7,0,46.7,0,93.3,0,140,0,4.8,1,9.6,2.1,14.4,1,4.5,3.8,8,7.7,10.7,6.2,4.3,7.6,11.7,3.4,17.3-4.2,5.7-11.4,6.6-17.5,1.9-13.1-10.1-19.9-23.4-19.9-40,0-47.5,0-95.1.2-142.6,0-6.3,0-12.8,1.4-18.9,5.3-22.1,25-36.9,47.7-36.8,24.8,0,49.6,0,74.5,0,0,0,0,0,0,0Z"/>
+    `;
+
+      textDiv.appendChild(svgIcon);
+      textDiv.appendChild(textSpan);
+      textDiv.addEventListener("click", () => {
+        scrollToAnchor();
+        dataLayer.push({
+          event: "GAevent",
+          eventAction: "click_cta_completa_look",
+          eventCategory: "click",
+        });
+      });
+      mediaBox.appendChild(textDiv);
+    };
+
+    const init = setInterval(() => {
+      if (
+        document.querySelector(".medias-box") &&
+        document.querySelector(".ctl-slider")
+      ) {
+        addText();
+        clearInterval(init);
+        window.addEventListener("scroll", updateTextPosition);
+      }
+    }, 100);
+  })();
+</script>

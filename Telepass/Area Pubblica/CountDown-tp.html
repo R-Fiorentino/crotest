@@ -1,0 +1,230 @@
+<script>
+
+let attemptCount = 0;
+const maxAttempt = 100;
+
+function testCountDownTPlus(){
+//Prendo l'elemento da sostituire
+var beforeThis = document.querySelector('.hero-block__list-cta');
+var father = beforeThis.parentElement;
+
+//Prendo la data iniziale (questo mi serve per stamparlo subito al caricamento della pagina)
+var oggi = new Date();
+var dataRiferimento = new Date('2024-10-04T00:00:00');
+var differenza = dataRiferimento - oggi;
+var giorni = Math.floor(differenza / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+var ore = Math.floor((differenza % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+var minuti = Math.floor((differenza % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+var secondi = Math.floor((differenza % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+//Creo l'elemento da stampare al caricamento della pagina
+var countdown = document.createElement('div');
+countdown.id = 'countdown-jkl';
+father.insertBefore(countdown, beforeThis);
+if(oggi >= dataRiferimento){
+    //Quando scade il tempo => mi setta tutto a 0 e rimane a 0
+    make_a_countdown('0','0','0','0','0','0');
+}else{
+    make_a_countdown(giorni.split('')[0], giorni.split('')[1], ore.split('')[0], ore.split('')[1], minuti.split('')[0], minuti.split('')[1], secondi.split('')[0], secondi.split('')[1]);
+}
+
+//Creo un set interval che mi faccia il countdown
+var int = setInterval(function(){
+    var oggi = new Date();
+    var dataRiferimento = new Date('2024-10-04T00:00:00');
+    if(oggi >= dataRiferimento){
+        //Quando scade il tempo => mi setta tutto a 0 e rimane a 0
+        make_a_countdown('0','0','0','0','0','0');
+        clearInterval(int);
+    }else{
+        var differenza = dataRiferimento - oggi;
+        var giorni = Math.floor(differenza / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+        var ore = Math.floor((differenza % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        var minuti = Math.floor((differenza % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        var secondi = Math.floor((differenza % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        make_a_countdown(giorni.split('')[0], giorni.split('')[1], ore.split('')[0], ore.split('')[1], minuti.split('')[0], minuti.split('')[1], secondi.split('')[0], secondi.split('')[1]);
+    }
+},1000);
+}
+
+
+var int2 = setInterval(function(){
+    if(document.querySelector('.Strip__content__item .hero-banner')){
+        console.log('elemento trovato - start funzione');
+        testCountDownTPlus();
+        clearInterval(int2);
+    }else{
+        attemptCount++;
+        console.log('tentativo ' + attemptCount);
+        if(attemptCount >= maxAttempt){
+            clearInterval(int2);
+            console.log('100 tentativi raggiunti');
+        }
+    }
+},100);
+
+
+//Creo la funzione che mi costruisce graficamente il countdown (ho messo 6 variabili per mettere la doppia cifra nei diversi box)
+function make_a_countdown(d1,d2,h1,h2,m1,m2,s1,s2){
+    var countdown = document.querySelector('#countdown-jkl');
+        countdown.innerHTML = `
+            <div class="cd-title">L'offerta scade tra</div>
+            <div id="giorni">
+                <div class="count-down-number"><div class="divider"></div>${d1}</div>
+                <div class="count-down-number"><div class="divider"></div>${d2}</div>
+                <div class="cd-label">Giorni</div>
+            </div>
+            <div id="ore">
+                <div class="count-down-number"><div class="divider"></div>${h1}</div>
+                <div class="count-down-number"><div class="divider"></div>${h2}</div>
+                <div class="cd-label">Ore</div>
+            </div>
+            <div id="minuti">
+                <div class="count-down-number"><div class="divider"></div>${m1}</div>
+                <div class="count-down-number"><div class="divider"></div>${m2}</div>
+                <div class="cd-label">Minuti</div>
+            </div>
+            <div id="secondi">
+                <div class="count-down-number"><div class="divider"></div>${s1}</div>
+                <div class="count-down-number"><div class="divider"></div>${s2}</div>
+                <div class="cd-label">Secondi</div>
+            </div>
+    `;
+}
+
+//CSS
+var existingStyle = document.getElementById('style-javascript-tpass-jkl');
+if (!existingStyle) {
+    var styleElement = document.createElement('style');
+    styleElement.id = 'style-javascript-tpass-jkl';
+    styleElement.textContent = `
+    .hero-block__check-list{
+        display: none !important;
+    }
+    .divider{
+        background: linear-gradient(180deg, rgba(255,255,255,0) 53%, rgba(0,39,82,0.4) 53%, rgba(0,39,82,0) 100%);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .count-down-number{
+        position: relative;
+        background-color: #002752;
+        border-radius: 3px;
+        padding: 8px 10px;
+        font-family: "Poppins", sans-serif;
+        font-size: 25px;
+        width: calc(50% - 2.5px);
+    }
+    #giorni, #ore, #minuti, #secondi{
+        display: flex; 
+        justify-content: space-between; 
+        color: white; 
+        flex-wrap: wrap;
+        width: 70px;
+    }
+    #giorni, #ore, #minuti{
+        margin-right: 20px;
+    }
+    .cd-label{
+        color: black; 
+        text-align: center; 
+        margin-top: 10px;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .cd-title{
+        color: #002752;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        width: 100%;
+        margin-top: -10px;
+    }
+
+    #countdown-jkl{
+        display: flex; 
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    @media screen and (max-width: 767px){
+        #countdown-jkl{
+            justify-content: center;
+        }
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 925px){
+        #countdown-jkl{
+            width: 120%;
+        }
+    }
+    `;
+    document.head.appendChild(styleElement);
+}
+
+</script>
+
+<style>
+    .hero-block__check-list{
+        display: none !important;
+    }
+    .divider{
+        background: linear-gradient(180deg, rgba(255,255,255,0) 53%, rgba(0,39,82,0.4) 53%, rgba(0,39,82,0) 100%);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .count-down-number{
+        position: relative;
+        background-color: #002752;
+        border-radius: 3px;
+        padding: 8px 10px;
+        font-family: "Poppins", sans-serif;
+        font-size: 25px;
+        width: calc(50% - 2.5px);
+    }
+    #giorni, #ore, #minuti, #secondi{
+        display: flex; 
+        justify-content: space-between; 
+        color: white; 
+        flex-wrap: wrap;
+        width: 70px;
+    }
+    #giorni, #ore, #minuti{
+        margin-right: 20px;
+    }
+    .cd-label{
+        color: black; 
+        text-align: center; 
+        margin-top: 10px;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .cd-title{
+        color: #002752;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        width: 100%;
+        margin-top: -10px;
+    }
+
+    #countdown-jkl{
+        display: flex; 
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    @media screen and (max-width: 767px){
+        #countdown-jkl{
+            justify-content: center;
+        }
+    }
+</style>

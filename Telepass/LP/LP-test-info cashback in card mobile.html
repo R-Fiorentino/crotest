@@ -1,0 +1,23 @@
+<script>
+    var card = document.querySelector('.offerta-card.content-step');
+    var before = card.querySelectorAll('.offerta-card--info')[2];
+    var next = card.querySelectorAll('.offerta-card--info')[1];
+    var father = before.parentElement; 
+    var temp = document.createElement('div');
+
+    father.replaceChild(temp, next);
+    father.replaceChild(next, before);
+    father.replaceChild(before, temp);
+
+    var button = document.querySelector('.detailsButtonMobile');
+    button.style.bottom = '-15px';
+    button.addEventListener('click', function(){
+        setTimeout(function(){
+            if(card.style.height == 'unset'){
+                button.style.bottom = '0px';
+            }else{
+                button.style.bottom = '-15px';
+            }
+        },10);
+    });
+</script>

@@ -1,0 +1,92 @@
+<script>
+var dataLayer = window.dataLayer || [];
+var language = dataLayer[0].language || 'en';  // Default to 'en' if language is not found
+
+var sizeInfoText;
+switch (language) {
+    case 'it':
+        sizeInfoText = 'Conosci tutte le nostre Sneakers?';
+        break;
+    case 'fr':
+        sizeInfoText = 'Connaissez-vous toutes nos Sneakers?';
+        break;
+    case 'de':
+        sizeInfoText = 'Kennst du alle unsere Sneakers?';
+        break;
+    case 'en':
+        sizeInfoText = 'Do you know all our Sneakers?';
+        break;
+    case 'es':
+        sizeInfoText = 'Conoces todas nuestras Sneakers?';
+        break;
+    default:
+        sizeInfoText = 'Do you know all our Sneakers?';
+        break;
+}
+
+
+var itAlreadyHappened = document.querySelector('.title-filters-cro');
+var quickFilter = document.querySelector('.quick-filter-sub');
+var readMoreWrapper = document.querySelector('.read-more-wrapper');
+var moreSpacing = readMoreWrapper.firstChild;
+moreSpacing.style.marginBottom = '63px';
+var title = document.createElement('div');
+readMoreWrapper.style.marginBottom = '0px';
+title.style.textAlign = 'center';
+title.innerHTML = '<h3 style="font-weight: 500; text-transform: uppercase;">'+ sizeInfoText +'</h3>';
+if(!itAlreadyHappened) {
+    title.classList.add('title-filters-cro');
+    quickFilter.parentNode.insertBefore(title, quickFilter);
+}
+var checkboxes = document.querySelectorAll('.filter-list.commercialGroup fieldset input[type="checkbox"]');
+checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('click', function() {
+            checkCurrentURLForCommercialGroup(checkbox.value);
+    });
+});
+function checkCurrentURLForCommercialGroup(value) {
+    const commercialGroupFromURL = getCommercialGroupFromURL(window.location.href);
+    if (value && !commercialGroupFromURL.includes(value)) {
+        const productGrid = document.querySelector('.product-grid > div:nth-child(2)');
+        if (productGrid) {
+            const scrollPosition = productGrid.offsetTop - 20;
+            window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+            }); 
+        }
+    }
+}
+function getCommercialGroupFromURL(url) {
+    var urlObject = new URL(url);
+    var commercialGroupValue = urlObject.searchParams.get('filters');
+    if (commercialGroupValue) {
+        var filters = decodeURIComponent(commercialGroupValue).split(':');
+        var commercialGroupIndex = filters.indexOf('commercialGroup');
+        if (commercialGroupIndex !== -1 && commercialGroupIndex + 1 < filters.length) {
+            return filters.slice(commercialGroupIndex + 1);
+        }
+    }
+    return [];
+}
+
+// var productGrid = document.querySelector('.product-grid');
+// const triggerIcon  = document.querySelector('i.icon-filter');
+// triggerIcon.addEventListener('click', ()=>{
+//     if(document.querySelector('.product-grid > section')){
+//         if(screenWDth > 767){
+//             productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//         }else{
+//             var helemntToScroll = productGrid.querySelector('div:nth-child(2)');
+//             helemntToScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//         }
+//     } else {
+//         productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//     };  
+// });
+// const scrollPosition = productGrid.offsetTop - 20;
+// window.scrollTo({
+//     top: scrollPosition,
+//     behavior: 'smooth'
+// });
+</script>

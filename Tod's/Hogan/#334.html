@@ -1,0 +1,160 @@
+<script>
+
+startTheCode();
+
+const targetNode = document.querySelector('section.cm-pdp-prod');
+if (targetNode) {
+    const config = { childList: true, subtree: true };
+    const callback = function(mutationsList, observer) {
+    for (let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+        for (let node of mutation.addedNodes) {
+            if (node.nodeType === 1 && node.id === 'recco_cont') {
+                startTheCode();
+            }
+        }
+        }
+    }
+    };
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+}
+
+function startTheCode() {
+    const carousel = document.querySelector('#recco_cont');
+    if(carousel) {
+        var galleryWrapper = document.querySelector('.gallery-wrapper');
+        var similarButton = document.createElement('div');
+        similarButton.innerHTML = 'prodotti simili';
+        var svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" id="Livello_1" data-name="Livello 1" version="1.1" viewBox="0 0 566.9 566.9">
+            <defs>
+            <style>
+                .cls-1 {
+                fill: #000;
+                stroke-width: 0px;
+                }
+            </style>
+            </defs>
+            <path class="cls-1" d="M438.6,316.5c0,25,0,49.9,0,74.9.1,27.6-22.4,49.2-50,49-49.4-.4-98.8-.4-148.2,0-27.4.2-49.9-21.3-49.9-48.8,0-47.4.1-94.8.3-142.3,0-6.7-.2-13.6,1.3-20,5-22.1,24.7-37.2,47.4-37.1,47.3,0,94.6.1,141.9.3,6.8,0,13.8-.2,20.4,1.3,21.9,5,37,24.6,36.9,47.1,0,12.6-.2,25.2-.2,37.8,0,12.6,0,25.2,0,37.8,0,0,.2,0,.3,0ZM314.4,416.1c22.8,0,45.7,0,68.5,0,3.7,0,7.5-.2,11.2-.8,11.1-1.6,17.9-8.4,19.5-19.6.5-3.3.8-6.7.8-10.1,0-46.3,0-92.6,0-138.9,0-3.4-.3-6.7-.8-10.1-1.6-10.7-7.5-17-18.1-19.1-4.2-.8-8.7-1.2-13-1.2-45.3,0-90.6,0-135.9,0-3.4,0-6.7.2-10.1.6-11.8,1.3-18.6,7.5-20.8,19.1-.8,3.9-1,7.9-1,11.9,0,45.5,0,91.1,0,136.6,0,3.2.2,6.5.6,9.7,1.4,12.3,8.4,19.4,20.6,21.1,3.4.5,7,.7,10.4.7,22.7,0,45.4,0,68.1,0Z"/>
+            <path class="cls-1" d="M250.5,128.4c24.9,0,49.9,0,74.8,0,16.7,0,30.1,7.1,40.1,20.4,4.4,5.8,3.4,13.3-2,17.3-5.6,4.2-13.1,2.9-17.3-3.4-5.1-7.6-12.9-9.3-21.1-10.1-1.9-.2-3.7-.1-5.6-.1-45.8,0-91.6,0-137.4,0-4.2,0-8.5.3-12.6,1.1-10.5,2.2-16.2,8.6-17.8,19.1-.5,3.2-.8,6.5-.8,9.7,0,46.7,0,93.3,0,140,0,4.8,1,9.6,2.1,14.4,1,4.5,3.8,8,7.7,10.7,6.2,4.3,7.6,11.7,3.4,17.3-4.2,5.7-11.4,6.6-17.5,1.9-13.1-10.1-19.9-23.4-19.9-40,0-47.5,0-95.1.2-142.6,0-6.3,0-12.8,1.4-18.9,5.3-22.1,25-36.9,47.7-36.8,24.8,0,49.6,0,74.5,0,0,0,0,0,0,0Z"/>
+        </svg>`;
+        similarButton.classList.add('trigger-button-cro')
+        similarButton.innerHTML = '<span>Prodotti simili</span>' + svgIcon;
+        galleryWrapper.append(similarButton);
+        behaviour(window.innerWidth, similarButton, carousel);
+        window.addEventListener('resize', function() {
+            behaviour(window.innerWidth, similarButton, carousel);
+        });
+        similarButton.addEventListener('click', function() {
+            if(window.innerWidth <= 991) {
+                var popupElement = document.querySelector('.popup-element');
+                popupElement.style.display = 'flex';
+            } else {
+                var element = document.getElementById('recco_cont');
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        })
+    }
+}
+
+function behaviour(width, similarButton, carousel) {
+    const carouselChild = document.querySelector('#recco_row');
+    if(width <= 991) {
+        let checkPopupElement = document.querySelector('.popup-element');
+        if(!checkPopupElement) {
+            const popupElement = document.createElement('div');
+            popupElement.classList.add('popup-element');
+            document.body.append(popupElement);
+            const closeButton = document.createElement('div');
+            closeButton.classList.add('close-button-cro');
+            closeButton.innerHTML = 'Chiudi';
+            carouselChild.prepend(closeButton);
+            popupElement.append(carouselChild);
+        } else {
+            checkPopupElement.append(carouselChild);
+        }
+        let closeButtonExists = document.querySelector('.close-button-cro');
+        if(closeButtonExists) {
+            closeButtonExists.addEventListener('click', function() {
+                let popupElementAgain = document.querySelector('.popup-element');
+                popupElementAgain.style.display = 'none';
+            });
+            carouselChild.prepend(closeButtonExists);
+        }
+    } else {
+        carousel.append(carouselChild);
+    }
+}
+
+
+// Inject CSS if not already present
+let checkStyle = document.querySelector('#style-cro');
+if (!checkStyle) {
+  const css = document.createElement('style');
+  css.id = 'style-cro';
+  css.innerHTML = `
+    .trigger-button-cro {
+        position: absolute;
+        bottom: 62px;
+        right: 15px;
+        z-index: 99;
+        font-size: 14px;
+    }
+    .trigger-button-cro svg {
+        width: 30px;
+    }
+    .trigger-button-cro span {
+        border-bottom: 1px solid black;
+    }
+    #recco_row .close-button-cro {
+        display: none;
+    }
+    @media (max-width: 991px) {
+        .popup-element {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 105;
+            display: none;
+            padding: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        .popup-element #recco_row {
+            width: 100%;
+            border-radius: 11px;
+            background-color: white;
+            padding-bottom: 30px;
+        }
+        .popup-element #recco_row .recco_item {
+            width: 100%;
+        }
+        .popup-element #recco_row #recco_title {
+            margin-top: 15px;
+        }
+        .popup-element .owl-dots {
+            margin-top: 10px!important;
+            padding-right: 30px;
+            padding-bottom: 30px;
+        }
+        #recco_row .close-button-cro {
+            float: right;
+            margin-right: 15px;
+            margin-top: 15px;
+            display: flex;
+            font-size: 14px;
+            border-bottom: 1px solid black;
+            text-transform: uppercase;
+        }
+        .trigger-button-cro {
+            bottom: 15px!important;
+        }
+    }
+    `;
+  document.head.append(css);
+}
+
+</script>>

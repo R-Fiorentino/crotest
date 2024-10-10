@@ -1,0 +1,223 @@
+<script>
+    rollBackScripts('[class*="mtRollback"]');
+    function rollBackScripts(selector) {
+        const observer = new MutationObserver(mutationCallback);
+        observer.observe(document, { childList: true, subtree: true });
+    
+        function mutationCallback(mutationsList, observer) {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    for (const node of mutation.addedNodes) {
+                        if (node.tagName === 'SCRIPT' && checkScriptSrc(node)) {
+                            console.log('New script with src containing "/trk/4/" added:');
+                            console.log(node);
+                            onPageChange(selector);
+                        }
+                    }
+                }
+            }
+        }
+    
+        function checkScriptSrc(script) {
+            return script.src && script.src.includes('/trk/4/');
+        }
+    
+        function onPageChange(selector) {
+            const elementsWithClass = document.querySelectorAll(selector);
+            elementsWithClass.forEach(element => {
+                element.remove();
+                console.log(element);
+            });
+            if (elementsWithClass.length > 0) {
+                observer.disconnect();
+            }
+        }
+    }
+
+    var dataLayer = window.dataLayer || [];
+    var login = dataLayer[0].login;
+    var location_and_language = dataLayer[0].country + '-' + dataLayer[0].language;
+    var language = dataLayer[0].language;
+    if(login == 'not-logged' && !document.getElementById('triangolo-jkl')){
+        var icon = document.querySelector('.js-account-trigger.Topbar-item.icon-profil');
+        var account = document.querySelector('.grid.Topbar-icons.Topbar-icons--right.js-header-icons');
+        var notLogged = document.createElement('div');
+        icon.style.position = 'relative';
+        notLogged.style.cssText = 'position: absolute; top: -3px; right: -5px; background-color: #BE0237; height: 10px; width: 10px; border-radius: 50px; opacity: 0;';
+        notLogged.classList.add('mtRollback');
+
+
+        var Accedi = {
+            it: 'Accedi',
+            en: 'Login',
+            de: 'Anmeldung',
+            fr: 'Connectez-vous',
+            es: 'Inicia sesión',
+        };
+        var Registrati = {
+            it: 'Registrati',
+            en: 'Subscribe',
+            de: 'registrieren',
+            fr: 'inscrivez-vous',
+            es: 'suscríbete',
+        };
+        var Or = {
+            it: 'o',
+            en: 'or',
+            de: 'oder',
+            fr: 'ou',
+            es: 'o',
+        };
+        var End = {
+            it: 'per una esperienza personalizzata.',
+            en: 'for a customized experience.',
+            de: 'Sie sich für ein personalisiertes Erlebnis',
+            fr: 'pour une expérience personnalisée.',
+            es: 'para una experiencia personalizada',
+        };
+
+        var message = document.createElement('div');
+        message.id = 'login-register-RV';
+        message.classList.add('mtRollback');
+        message.innerHTML = '<div id="triangolo-jkl"></div>';
+
+        var login = document.createElement('span');
+        login.id = 'login-RV';
+        login.textContent = Accedi[language];
+        login.style.cssText = 'text-decoration: underline; color: white; cursor: pointer;';
+
+        var register = document.createElement('span');
+        register.id = 'register-RV';
+        register.textContent = Registrati[language];
+        register.style.cssText = 'text-decoration: underline; color: white; cursor: pointer;';
+
+        message.appendChild(login);
+        message.innerHTML += ' ' + Or[language] + ' ';
+        message.appendChild(register);
+        message.innerHTML += ' ' + End[language];
+        message.style.cssText = 'color: white; background-color: #BE0237; padding: 15px; border-radius: 10px; position: absolute; width: 230px; opacity: 0; top: 50px; font-size: .875rem; line-height: 1.15rem;';
+        account.appendChild(message);
+        icon.appendChild(notLogged);
+        document.querySelector('#login-RV').addEventListener('click', function(){
+            icon.click();
+        });
+        document.querySelector('#register-RV').addEventListener('click', function(){
+            window.location.href = 'https://www.rogervivier.com/'+ location_and_language +'/register/';
+        });
+
+        notLogged.animate([
+            {opacity: 1},
+            {opacity: 1}
+        ],{
+            duration: 200,
+            fill: 'forwards'
+        });
+        notLogged.style.opacity = 1;
+        message.animate([
+            {opacity: 1},
+            {opacity: 1}
+        ],{
+            duration: 200,
+            fill: 'forwards'
+        });
+        message.style.opacity = 1;
+        
+        let opacità = false;
+        let lastScrollTop = 0;
+        
+        document.addEventListener('scroll', function(){
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop) {
+                if(opacità === false){
+                    notLogged.animate([
+                        {opacity: 1},
+                        {opacity: 0}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    notLogged.style.opacity = 0;
+                    message.animate([
+                        {opacity: 1},
+                        {opacity: 0}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    message.style.opacity = 0;
+                    opacità = true;
+                }
+            } else {
+                if(opacità === true){
+                    notLogged.animate([
+                        {opacity: 0},
+                        {opacity: 1}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    notLogged.style.opacity = 1;
+                    message.animate([
+                        {opacity: 0},
+                        {opacity: 1}
+                    ],{
+                        duration: 200,
+                        fill: 'forwards'
+                    });
+                    message.style.opacity = 1;
+                    opacità = false;
+                }
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        setTimeout(function(){
+            if(notLogged.style.opacity != 0){
+                notLogged.animate([
+                    {opacity: 1},
+                    {opacity: 1}
+                ],{
+                    duration: 200,
+                    fill: 'forwards'
+                });
+                notLogged.style.opacity = 0;
+                message.animate([
+                    {opacity: 1},
+                    {opacity: 1}
+                ],{
+                    duration: 200,
+                    fill: 'forwards'
+                });
+                message.style.opacity = 0;
+            }
+        }, 5000);
+
+    }
+
+    var existingStyle = document.getElementById('style-javascript-tpass-jkl');
+    if (!existingStyle) {
+        var styleElement = document.createElement('style');
+        styleElement.id = 'style-javascript-tpass-jkl';
+        styleElement.textContent = `
+            .other-elements-container div{
+                text-transform: none !important;
+            }
+            #triangolo-jkl {
+                position: absolute;
+                right: 100px;
+                top: -10px;
+                width: 0;
+                height: 0;
+                line-height: 0;
+                border-bottom: 10px solid #BE0237;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+            }
+            #login-register-RV{
+                left: -90px;
+            }
+        `;
+        document.head.appendChild(styleElement);
+    }
+
+</script>

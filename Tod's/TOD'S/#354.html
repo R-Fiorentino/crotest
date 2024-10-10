@@ -1,0 +1,91 @@
+<!-- Test di tods che inserisce CTA "Completa il tuo look" che porta a sezione in pagina -->
+<script>
+    var checkExist = setInterval(function() {
+  var imageGallery = document.querySelector('.prod-glly');
+  var completeLookBox = document.querySelector('[class^="ps-widget-"]');
+  var prodMenu = document.querySelector('.prod-menu');
+  var pageHeader = document.querySelector('.page-header');
+  var headerWrapper = document.querySelector('.header-wrp');
+
+  if (imageGallery && completeLookBox && prodMenu && pageHeader && headerWrapper) {
+    var headerHeight = pageHeader.offsetHeight;
+
+    var newText = document.createElement('div');
+    Object.assign(newText.style, {
+      position: 'absolute',
+      backgroundColor: '#ffffffb3',
+      color: 'black',
+      padding: '8px 24px',
+      cursor: 'pointer',
+      zIndex: '10',
+      fontWeight: '500',
+      borderRadius: '26px',
+      border: '1px solid black',
+      transition: 'top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease'
+    });
+
+    var urlParts = window.location.href.split('/');
+    var lang = urlParts[3].split('-')[1];
+    var textMap = {
+      'it': 'Completa il tuo look',
+      'en': 'Complete your look',
+      'es': 'Completa tu look',
+      'fr': 'Complétez votre look',
+      'de': 'Vervollständigen Sie Ihren Look'
+    };
+    newText.textContent = textMap[lang] || textMap['en'];
+
+    if (window.innerWidth < 768) {
+      newText.style.bottom = '3rem';
+      newText.style.left = '1rem';
+    } else if (window.innerWidth >= 768 && window.innerWidth <= 991) {
+      newText.style.top = '50px';
+      newText.style.left = '1rem';
+    } else {
+      newText.style.top = 20 + headerHeight + 'px';
+      newText.style.left = '4rem';
+    }
+
+    newText.addEventListener('click', function() {
+      if (window.innerWidth < 768) {
+        window.scrollTo({ top: completeLookBox.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
+      } else {
+        anchorDiv.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    imageGallery.style.position = 'relative';
+    imageGallery.appendChild(newText);
+
+    if (window.innerWidth >= 768) {
+      var anchorDiv = document.createElement('div');
+      anchorDiv.style.position = 'relative';
+      anchorDiv.style.top = '-500px';
+      prodMenu.parentNode.insertBefore(anchorDiv, prodMenu);
+      window.addEventListener('scroll', function() {
+        var topPosition = headerHeight + 20;
+
+        if (window.scrollY === 0 && window.innerWidth >= 768 && window.innerWidth <= 991) {
+          newText.style.top = '140px';
+        } else {
+          if (headerWrapper.classList.contains('header-wrp--scrolling-up')) {
+            newText.style.position = 'fixed';
+            newText.style.top = headerHeight + 20 + 'px';
+          } else if (headerWrapper.classList.contains('header-wrp--scrolling-down')) {
+            newText.style.position = 'fixed';
+            newText.style.top = '20px';
+          }
+          if (window.scrollY > imageGallery.offsetTop && window.scrollY < (imageGallery.offsetTop + imageGallery.offsetHeight - newText.offsetHeight)) {
+            newText.style.position = 'fixed';
+          } else {
+            newText.style.position = 'absolute';
+            newText.style.top = topPosition + 'px';
+          }
+        }
+      });
+    }
+
+    clearInterval(checkExist);
+  }
+}, 100);
+</script>

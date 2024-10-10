@@ -1,0 +1,332 @@
+<!-- Script che duplica, le taglie nella pdp -->
+<!-- VECCHIO SCRIPT <script>
+window.onload = function() {
+    function isDesktop() {
+        return window.innerWidth > 768;
+    }
+
+    function duplicateOrShowAccordion(clearFilters = false) {
+        if (!isDesktop()) return;
+
+        const sizeFilterSection = document.querySelector('.filter-filter .filter-menu');
+        const targetElement = document.querySelector('.card-main .title-main');
+
+        if (targetElement) {
+            const existingDuplicate = document.querySelector('.size-filter-duplicate');
+            if (existingDuplicate) {
+                existingDuplicate.remove();
+            }
+
+            if (sizeFilterSection) {
+                const sizeFilterClone = sizeFilterSection.cloneNode(true);
+
+                if (clearFilters) {
+                    const checkboxes = sizeFilterClone.querySelectorAll('.custom-control-input');
+                    checkboxes.forEach(checkbox => checkbox.checked = false);
+                }
+
+                const newDiv = document.createElement('div');
+                newDiv.classList.add('size-filter-duplicate', 'filter-filter');
+                newDiv.appendChild(sizeFilterClone);
+                targetElement.parentNode.insertBefore(newDiv, targetElement.nextSibling);
+            }
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function setupFilterChangeListener() {
+        if (!isDesktop()) return;
+
+        const originalCheckboxes = document.querySelectorAll('.filter-filter .custom-control-input');
+        originalCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', function() {
+                duplicateOrShowAccordion();
+            });
+        });
+    }
+
+    function checkUrlForSize() {
+        if (!isDesktop()) return;
+
+        const url = window.location.href.toLowerCase();
+        const hasSizeInUrl = url.includes('size');
+        const existingDuplicate = document.querySelector('.size-filter-duplicate');
+
+        if (hasSizeInUrl) {
+            duplicateOrShowAccordion();
+        } else if (existingDuplicate) {
+            duplicateOrShowAccordion(true);
+        }
+
+        setupFilterChangeListener();
+    }
+
+    checkUrlForSize();
+
+    window.addEventListener('popstate', function() {
+        checkUrlForSize();
+    });
+
+    (function(history) {
+        const pushState = history.pushState;
+        const replaceState = history.replaceState;
+
+        history.pushState = function(state) {
+            if (typeof history.onpushstate == "function") history.onpushstate({ state: state });
+            setTimeout(checkUrlForSize, 100);
+            return pushState.apply(history, arguments);
+        };
+
+        history.replaceState = function(state) {
+            if (typeof history.onreplacestate == "function") history.onreplacestate({ state: state });
+            setTimeout(checkUrlForSize, 100);
+            return replaceState.apply(history, arguments);
+        };
+    })(window.history);
+};
+</script> -->
+<script>
+(function() {
+    // const addDynamicStylesMobile = () => {
+    //     const style = document.createElement('style');
+    //     style.innerHTML = `
+    //         .cm-filter-wrp {
+    //             .menu-option-container {
+    //                 background: white;
+    //                 color: #000;
+    //                 padding: 0 15px;
+    //             }
+    //             .filter-list{
+    //               display: flex;
+    //             }
+    //             .icon-trigger-menu {
+    //                 display: none;
+    //             }
+    //             legend{
+    //             flex: 20%;
+    //             padding-top: 17px;
+    //             text-align: left;
+    //             }
+    //             fieldset {
+    //                 display: grid;
+    //                 grid-gap: 8px;
+    //                 padding-top: 12px;
+    //                 padding-bottom: 12px;
+    //                 grid-auto-flow: column;
+    //                 grid-auto-columns: max-content;
+    //                 overflow-x: auto;
+    //                 white-space: nowrap;
+    //                 flex: 80%;
+    //                 margin: 0;
+    //             }
+    //              .filter-filter fieldset .custom-control {
+    //             padding-bottom: 0;
+    //         }
+    //         .filter-list legend{
+    //         font-weight: 600;
+    //         }
+    //         }
+
+    //     `;
+    //     document.head.appendChild(style);
+    // };
+
+    const mobileFilterBehavior = () => {
+        // addDynamicStylesMobile();
+
+        const findSizeFilterContainer = () => {
+            const modalFilterLayer = document.querySelector('.modal.filters-layer');
+            const cmFilterWrapper = document.querySelector('.cm-filter-wrp');
+
+            const sizeFilterContainer = Array.from(document.querySelectorAll('.menu-option-container'))
+  .find(container => Array.from(container.querySelectorAll('input[type="checkbox"]'))
+    .some(input => /^filter_2_\d+$/.test(input.id))
+  );
+
+            if (!modalFilterLayer || !sizeFilterContainer || !cmFilterWrapper) {
+                return setTimeout(findSizeFilterContainer, 500);
+            }
+
+            const originalParent = sizeFilterContainer.parentElement;
+            let newFilterContainer = null;
+
+            const moveSizeFilterContainer = () => {
+                if (!cmFilterWrapper.contains(sizeFilterContainer)) {
+                    newFilterContainer = document.createElement('div');
+                    newFilterContainer.className = 'filter-filter';
+
+                    const fieldset = sizeFilterContainer.querySelector('fieldset');
+                    const legend = fieldset ? fieldset.querySelector('legend') : null;
+
+                    if (legend) {
+                        fieldset.parentNode.insertBefore(legend, fieldset);
+                    }
+
+                    newFilterContainer.appendChild(sizeFilterContainer);
+                    cmFilterWrapper.insertBefore(newFilterContainer, cmFilterWrapper.firstChild);
+                }
+            };
+
+            const resetSizeFilterContainer = () => {
+                if (!originalParent.contains(sizeFilterContainer)) {
+                    if (newFilterContainer) {
+                        newFilterContainer.remove();
+                        newFilterContainer = null;
+                    }
+
+                    originalParent.insertBefore(sizeFilterContainer, originalParent.firstChild);
+                }
+            };
+
+            const checkModalState = () => {
+                if (modalFilterLayer.classList.contains('show') && modalFilterLayer.classList.contains('display')) {
+                    resetSizeFilterContainer();
+                } else {
+                    moveSizeFilterContainer();
+                }
+            };
+
+            const observer = new MutationObserver(checkModalState);
+            observer.observe(modalFilterLayer, { attributes: true, attributeFilter: ['class'] });
+
+            checkModalState();
+        };
+
+        findSizeFilterContainer();
+    };
+
+    const desktopFilterBehavior = () => {
+        function scrollToTopImmediately() {
+            window.scrollTo(0, 0);
+        }
+
+        function hideProductNumber() {
+            const filterNumberDiv = document.querySelector('.filter-number');
+            if (filterNumberDiv) {
+                filterNumberDiv.style.visibility = 'hidden';
+            }
+        }
+
+        function showProductNumber() {
+            const filterNumberDiv = document.querySelector('.filter-number');
+            if (filterNumberDiv) {
+                filterNumberDiv.style.visibility = 'visible';
+            }
+        }
+
+        function monitorProductNumber() {
+            const filterNumberDiv = document.querySelector('.filter-number');
+
+            if (filterNumberDiv) {
+                let previousNumber = filterNumberDiv.innerText;
+
+                const checkInterval = 100;
+                setInterval(() => {
+                    const currentNumber = filterNumberDiv.innerText;
+                    if (currentNumber !== previousNumber) {
+                        previousNumber = currentNumber;
+                        hideProductNumber();
+                        scrollToTopImmediately();
+                        setTimeout(showProductNumber, 300);
+                    }
+                }, checkInterval);
+            }
+        }
+
+        function duplicateOrShowAccordion(clearFilters = false) {
+            const sizeFilterSectionDesktop = [...document.querySelectorAll('.filter-menu')]
+  .find(menu => menu.querySelector('input[type="checkbox"][id^="filter_2_"]'));
+            const targetElement = document.querySelector('.card-main .title-main');
+
+            function moveSelectedFiltersToTop(filterList) {
+                const selectedFilters = Array.from(filterList.querySelectorAll('.custom-control-input:checked')).map(checkbox => checkbox.closest('.custom-control'));
+                const unselectedFilters = Array.from(filterList.querySelectorAll('.custom-control-input:not(:checked)')).map(checkbox => checkbox.closest('.custom-control'));
+
+                filterList.innerHTML = '';
+
+                selectedFilters.forEach(filter => filterList.appendChild(filter));
+                unselectedFilters.forEach(filter => filterList.appendChild(filter));
+            }
+
+            if (targetElement) {
+                const existingDuplicate = document.querySelector('.size-filter-duplicate');
+                if (existingDuplicate) {
+                    existingDuplicate.remove();
+                }
+
+                if (sizeFilterSectionDesktop) {
+                    const sizeFilterClone = sizeFilterSectionDesktop.cloneNode(true);
+
+                    if (clearFilters) {
+                        const checkboxes = sizeFilterClone.querySelectorAll('.custom-control-input');
+                        checkboxes.forEach(checkbox => checkbox.checked = false);
+                    }
+
+                    const newDiv = document.createElement('div');
+                    newDiv.classList.add('size-filter-duplicate', 'filter-filter');
+                    newDiv.appendChild(sizeFilterClone);
+                    targetElement.parentNode.insertBefore(newDiv, targetElement.nextSibling);
+                }
+            }
+        }
+
+        function setupFilterChangeListener() {
+            const originalCheckboxes = document.querySelectorAll('.filter-filter .custom-control-input');
+            originalCheckboxes.forEach((checkbox) => {
+                checkbox.addEventListener('change', function() {
+                    duplicateOrShowAccordion();
+                });
+            });
+        }
+
+        function checkUrlForSize() {
+            const url = window.location.href.toLowerCase();
+            const hasSizeInUrl = url.includes('size');
+            const existingDuplicate = document.querySelector('.size-filter-duplicate');
+
+            duplicateOrShowAccordion();
+
+            if (!hasSizeInUrl && existingDuplicate) {
+                duplicateOrShowAccordion(true);
+            }
+
+            setupFilterChangeListener();
+        }
+
+        checkUrlForSize();
+        monitorProductNumber();
+
+        window.addEventListener('popstate', function() {
+            checkUrlForSize();
+        });
+
+        (function(history) {
+            const pushState = history.pushState;
+            const replaceState = history.replaceState;
+
+            history.pushState = function(state) {
+                if (typeof history.onpushstate == "function") history.onpushstate({ state: state });
+                setTimeout(checkUrlForSize, 100);
+                return pushState.apply(history, arguments);
+            };
+
+            history.replaceState = function(state) {
+                if (typeof history.onreplacestate == "function") history.onreplacestate({ state: state });
+                setTimeout(checkUrlForSize, 100);
+                return replaceState.apply(history, arguments);
+            };
+        })(window.history);
+    };
+
+    const isMobileDevice = () => {
+        return window.innerWidth <= 767;
+    };
+
+    if (isMobileDevice()) {
+        mobileFilterBehavior();
+    } else {
+        desktopFilterBehavior();
+    }
+
+})();
+</script>

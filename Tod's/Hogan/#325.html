@@ -1,0 +1,116 @@
+<script>
+var quickFilter = document.querySelector('.filter-list.Color.duplicate');
+if (quickFilter) {
+    var checkCss = document.head.querySelector('#newCss-cro');
+    if (!checkCss) {
+        var newCss = document.createElement('style');
+        newCss.id = 'newCss-cro';
+        newCss.innerHTML = `
+            .new-filter-container .custom-control {
+                top: 0!important;
+                opacity: 1!important;
+                width: fit-content!important;
+                margin-right: 0px!important;
+            }
+            .new-filter-container .custom-control input:not(:checked) + label {
+                color: #000!important;
+            }
+            .new-filter-container .custom-control label:not(.active) {
+                color: #000!important;
+            }
+            .new-filter-container fieldset {
+                display: flex;
+                flex-wrap: wrap;          
+                gap: 15px;
+                justify-content: center;
+            }
+            .new-filter-container fieldset legend {
+                width: 100%;
+            }
+            .new-filter-container input:before {
+                pointer-events: none!important;
+            }
+            .filter-layer.filter-color:not(.display) .custom-control {
+                display: none!important;
+            }
+        `;
+        document.head.appendChild(newCss);
+    }
+
+    function checkInputs(originalInputs, clonedInputs, clonedLabels) {
+        originalInputs.forEach(function (item, index) {
+            if (item.checked) {
+                clonedLabels[index].classList.add('active');
+                clonedInputs[index].checked = true;
+            } else {
+                clonedLabels[index].classList.remove('active');
+                clonedInputs[index].checked = false;
+            }
+        });
+    }
+
+    const newFilterContainer = document.createElement('div');
+    newFilterContainer.classList.add('new-filter-container', 'filter-color');
+
+    const colorFilters = document.querySelector('.filter-list.Color:not(.duplicate)');
+    if (colorFilters) {
+        const colorFilterParent = colorFilters.parentNode;
+        colorFilterParent.classList.add('color-filters-in-filter');
+
+        const colorsCloned = colorFilters.cloneNode(true);
+        colorsCloned.classList.add('duplicate');
+        
+        const cardMain = document.querySelector('.card-main');
+        newFilterContainer.appendChild(colorsCloned);
+        cardMain.appendChild(newFilterContainer);
+
+        var colorsClonedInputs = colorsCloned.querySelectorAll('input');
+        var colorsClonedLabels = colorsCloned.querySelectorAll('label');
+        var originalInputs = colorFilters.querySelectorAll('input');
+
+        colorsClonedInputs.forEach(function (item) {
+            item.id = '';
+        });
+
+        var controls = [colorsCloned, colorFilters];
+        controls.forEach(function (elm) {
+            elm.addEventListener('click', function () {
+                checkInputs(originalInputs, colorsClonedInputs, colorsClonedLabels);
+            });
+        });
+
+        checkInputs(originalInputs, colorsClonedInputs, colorsClonedLabels);
+    } else {
+        const sizeFilters = document.querySelector('.filter-list.itSize:not(.duplicate)');
+        if (sizeFilters) {
+            const sizeFiltersParent = sizeFilters.parentNode;
+            sizeFiltersParent.classList.add('color-filters-in-filter');
+
+            const sizesCloned = sizeFilters.cloneNode(true);
+            sizesCloned.classList.add('duplicate');
+            
+            const cardMain = document.querySelector('.card-main');
+            newFilterContainer.appendChild(sizesCloned);
+            cardMain.appendChild(newFilterContainer);
+
+            var sizesClonedInputs = sizesCloned.querySelectorAll('input');
+            var sizesClonedLabels = sizesCloned.querySelectorAll('label');
+            var originalInputs = sizeFilters.querySelectorAll('input');
+
+            sizesClonedInputs.forEach(function (item) {
+                item.id = '';
+            });
+
+            var controls = [sizesCloned, sizeFilters];
+            controls.forEach(function (elm) {
+                elm.addEventListener('click', function () {
+                    checkInputs(originalInputs, sizesClonedInputs, sizesClonedLabels);
+                });
+            });
+
+            checkInputs(originalInputs, sizesClonedInputs, sizesClonedLabels);
+        }
+    }
+}
+
+</script>

@@ -1,0 +1,30 @@
+<script>
+function isNotDesktop() {
+    return window.innerWidth <= 991;
+}
+var originalBlock = document.querySelector('.d-flex.add-to-cart-section__buttons__block-1');
+var price = document.querySelector('.add-to-cart-section__buttons .prod-info__c-price');
+function executeNotOnDesktop() {
+    if (isNotDesktop()) {
+        if (price) {
+            var productTitle = document.querySelector('.add-to-cart-section .product-title__h1');
+            var titleParent = productTitle.parentNode;
+            var titleContainer = titleParent.parentNode;
+            titleParent.style.paddingBottom = '0';
+            price.style.alignSelf = 'flex-start';
+            titleContainer.style.justifyContent = 'space-between';
+            titleContainer.appendChild(price);
+        }
+    } else {
+        if(price) {
+            originalBlock.parentNode.insertAdjacentElement('afterend', price);
+        }
+    }
+}
+
+executeNotOnDesktop();
+
+window.addEventListener('resize', function() {
+    executeNotOnDesktop();
+});
+</script>

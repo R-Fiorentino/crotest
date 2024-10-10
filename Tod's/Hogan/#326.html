@@ -1,0 +1,111 @@
+<script>
+
+rollBackScripts('[class*="mtRollback"]');
+
+
+
+function rollBackScripts(selector) {
+    const observer = new MutationObserver(mutationCallback);
+    observer.observe(document, { childList: true, subtree: true });
+ 
+    function mutationCallback(mutationsList, observer) {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                for (const node of mutation.addedNodes) {
+                    if (node.tagName === 'SCRIPT' && checkScriptSrc(node)) {
+                        console.log('New script with src containing "/trk/4/" added:');
+                        console.log(node);
+                        onPageChange(selector);
+                    }
+                }
+            }
+        }
+    }
+ 
+    function checkScriptSrc(script) {
+        return script.src && script.src.includes('/trk/4/');
+    }
+ 
+    function onPageChange(selector) {
+        const elementsWithClass = document.querySelectorAll(selector);
+        elementsWithClass.forEach(element => {
+            element.remove();
+            console.log(element);
+        });
+        if (elementsWithClass.length > 0) {
+            observer.disconnect();
+        }
+    }
+}
+
+var style = document.createElement('style');
+style.textContent = '\
+.new-claim {position: fixed; display:flex; z-index: 10; bottom: 110px; right: 0; background: #fff; padding: 10px 25px; border-radius: 20px; margin-right: 20px; max-width: 300px; box-shadow: 0 0 30px #33333320; transition: all .4s ease-out; cursor:pointer; animation: shake 1s ease-in-out forwards;}\
+.new-claim p {font-size: 14px; color: #333; line-height: 1.5; margin:0}\
+.close-claim svg {\
+    width: 24px;\
+    position: relative;\
+    left: 10px;\
+    top: 5px;}\
+.new-claim span { \
+  position: absolute;\
+  top: 45%;\
+  right: 15px;\
+  transform: translate(0, -50%);\
+}\
+.c-none {right: -100%;  transition: all .4s ease-out;}\
+@keyframes shake {\
+  0%,100% {\
+      transform: translate(0, 0);\
+  }\
+  10%,30%,50%,70%,90% {\
+      transform: translate(5px);\
+  }\
+  20%,40%,60%,80% {\
+      transform: translate(-5px);\
+  }\
+}\
+';
+document.head.append(style);
+
+var checkInterval = setInterval(function() {
+    var prodSizeCtn = document.querySelector('.prod-size-ctn[role="radiogroup"]');
+    var similarProd = prodSizeCtn ? prodSizeCtn.querySelector('.similar-products') : null;
+
+    if (similarProd) {
+        clearInterval(checkInterval); // Interrompe il setInterval una volta trovata la classe
+        
+        if (document.getElementById('iframe_webchat') && !document.querySelector('.new-claim')) {
+            setTimeout(function() {
+                if (!document.querySelector('.new-claim')) {
+                    var newClaim = document.createElement('div');
+                    newClaim.className = "new-claim mtRollback";
+                    newClaim.innerHTML = '\
+                    <p>Non c\'è la tua taglia, ti aiutiamo noi a trovare la scarpa perfetta per te</p>\
+                    <span class="close-claim"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_164_1831" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32"><rect width="32" height="32" fill="#D9D9D9"/></mask><g mask="url(#mask0_164_1831)"><path d="M8.53344 24.4103L7.58984 23.4667L15.0565 16L7.58984 8.53332L8.53344 7.58972L16.0001 15.0564L23.4668 7.58972L24.4104 8.53332L16.9437 16L24.4104 23.4667L23.4668 24.4103L16.0001 16.9436L8.53344 24.4103Z" fill="black"/></g></svg></span>';
+
+                    document.body.append(newClaim);
+                    
+                    var closeClaim = newClaim.querySelector('.close-claim');
+                    closeClaim.addEventListener('click', function(event) {
+                        newClaim.classList.add('c-none');
+                    });
+                    
+                    newClaim.addEventListener('click', function() {
+                        document.querySelector('.webchat_floatingButton').click();
+                    });
+                }
+            }, 1500); 
+        }
+    }
+}, 500); // Esegui ogni 500ms
+
+// Interrompe il setInterval automaticamente dopo 20 secondi (20000ms)
+setTimeout(function() {
+    clearInterval(checkInterval);
+}, 20000);
+
+
+
+
+</script>

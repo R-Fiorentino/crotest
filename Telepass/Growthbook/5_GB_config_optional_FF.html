@@ -1,0 +1,139 @@
+<script>
+    (function() {
+      var gb;
+    
+    // Funzioni per gestione SPA
+
+      function onRouteChange() {
+        var newURL = window.location.href;
+        if (gb) {
+          gb.setAttributes(updateAttributes(gb.getAttributes(), { url: newURL }));
+        } else {
+          initializeGrowthBook(newURL);
+        }
+        return newURL;
+      }
+    
+      function updateAttributes(oldAttributes, newValues) {
+        var updatedAttributes = {};
+        for (var key in oldAttributes) {
+          if (oldAttributes.hasOwnProperty(key)) {
+            updatedAttributes[key] = oldAttributes[key];
+          }
+        }
+        for (var key in newValues) {
+          if (newValues.hasOwnProperty(key)) {
+            updatedAttributes[key] = newValues[key];
+          }
+        }
+        return updatedAttributes;
+      }
+
+      // Initalize GB
+    
+      function initializeGrowthBook(url) {
+        if (!window.growthbook) return;
+        if (typeof gtag !== 'undefined') {
+          gtag('get', 'G-999425HZSD', 'client_id', function(uid) { //modifica ID di gtag
+            gb = new growthbook.GrowthBook({
+              apiHost: "https://cdn.growthbook.io",
+              clientKey: "sdk-jUTuMKq0e4Tqc4Sa",       // modifica clientkey 
+              enableDevMode: true,
+              attributes: {
+                id: uid,
+                url: url,
+                has_not_click_EV_App_Telepass: haClickSuEVAppTelepass,
+                visitCounter: valoreContatoreVisite,
+                isMobileDevice: isUserOnMobile,
+                isEligibleForTest: isEligibleForTest
+              },
+              trackingCallback: function(experiment, result) {
+                salvaDatiEsperimento(result.variationId, experiment.key);
+                if (typeof gtag === 'function') {
+                  console.log("gtag ready");
+                  gtag("event", "experiment_viewed", {
+                    event_category: "experiment",
+                    experiment_id: experiment.key,
+                    variation_id: result.variationId
+                  });
+                } else {
+                  console.log("gtag not ready");
+                }
+                console.log("Viewed Experiment", {
+                  experiment_id: experiment.key,
+                  variation_id: result.variationId
+                });
+              }
+            });
+    
+            gb.loadFeatures().then(function() {
+              if (gb.isOn("test")) {
+                // Implementa qui la logica per il test A/B (OPTIONAL)
+              } else {
+                console.log("Feature is disabled.");
+              }
+            });
+          });
+        } else {
+          console.log("gtag is not defined");
+        }
+      }
+    
+      function setupRouteChangeDetection() {
+        var methods = ['pushState', 'replaceState'];
+        for (var i = 0; i < methods.length; i++) {
+          var method = methods[i];
+          var original = window.history[method];
+          window.history[method] = function() {
+            original.apply(this, arguments);
+            onRouteChange();
+          };
+        }
+        
+        window.addEventListener('popstate', onRouteChange);
+      }
+    
+      function getDomainKey() {
+        return 'gb_domain';
+      }
+      
+      function salvaDatiLocalStorage(chiave, dati, isDomain) {
+        var domainKey = getDomainKey();
+        var datiSalvati = JSON.parse(localStorage.getItem(domainKey) || '{}');
+        if (isDomain) {
+          datiSalvati[chiave] = dati;
+        } else {
+          var url = window.location.href;
+          var sanitizedUrl = url.replace(window.location.search, '')
+                                .replace(window.location.hash, '')
+                                .replace(window.location.protocol + '//', '');
+          if (!datiSalvati.pages) datiSalvati.pages = {};
+          if (!datiSalvati.pages[sanitizedUrl]) datiSalvati.pages[sanitizedUrl] = {};
+          datiSalvati.pages[sanitizedUrl][chiave] = dati;
+        }
+        localStorage.setItem(domainKey, JSON.stringify(datiSalvati));
+      }
+    
+      function salvaDatiEsperimento(variantId, experimentId) {
+        salvaDatiLocalStorage('gb_variant_id', variantId, true);
+        salvaDatiLocalStorage('gb_experiment_id', experimentId, true);
+      }
+    
+      function init() {
+        setupRouteChangeDetection();
+        onRouteChange();
+      }
+    
+       if (window.growthbook) {
+        init();
+      } else {
+        var growthbookSdkElement = document.querySelector("#growthbook-sdk");
+        if (growthbookSdkElement) {
+          growthbookSdkElement.addEventListener("load", init);
+        } else {
+          console.warn("#growthbook-sdk element not found");  // applico warning e non error per non interferire con check errori console del cliente
+        }
+      }
+    
+    })();
+    </script>

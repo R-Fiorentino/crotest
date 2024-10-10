@@ -1,0 +1,63 @@
+<script>
+    var checkAddedFeatures = document.querySelector('.myPatchStyle');
+
+if (!checkAddedFeatures)  {
+
+    const myPatch = document.createElement('div');
+    myPatch.classList.add('myPatchStyle');
+    myPatch.innerText= "La modella è alta 180cm e indossa la taglia S (IT)" ;
+
+    toggle();
+    window.onresize = function() {
+        toggle();
+    }
+
+    function toggle() {
+        if (window.innerWidth > 991) {
+            var checkIfImagesLoaded = document.querySelectorAll('.medias-box-wrapper')[0];
+            if(checkIfImagesLoaded){
+                const myFirstImageBoxDesktop = document.querySelectorAll('.medias-box-wrapper')[0].children[0];
+                myFirstImageBoxDesktop.classList.add('myFirstImageBoxStyle');
+                myFirstImageBoxDesktop.append(myPatch);
+            }
+        }
+        else{
+                const myFirstImageBoxMobile = document.querySelectorAll('.swiper-wrapper')[0].children[0];
+                myFirstImageBoxMobile.classList.add('myFirstImageBoxStyle');
+                myFirstImageBoxMobile.append(myPatch);
+        }
+    }
+
+
+    let cssStuff = 
+    ` 
+    <style type="text/css">
+
+        .myFirstImageBoxStyle {
+            position: relative;
+        }
+
+        .myFirstImageBoxStyle picture{
+            position: static;
+            z-index: 0;
+        }
+
+        .myPatchStyle {
+            position: absolute;
+            bottom: 2%; 
+            left: 2%; 
+            background-color: rgba(248,248,248, 0.5); 
+            color: #1b2943;
+            padding: 7px 5px 5px 5px;
+            font-size: 11px; 
+            text-align: center;
+            z-index: 1;
+        }
+
+    </style>
+    `;
+
+    document.head.innerHTML+= cssStuff;
+
+}
+</script>

@@ -1,0 +1,42 @@
+<script>
+    if(window.innerWidth <= 767) {
+    salesVersion(true);
+}
+window.addEventListener('resize', function() {
+    if(window.innerWidth <= 767) {
+        salesVersion(true);
+    } else {
+        salesVersion(false);
+    }
+});
+
+function salesVersion(run) {
+    var toRemove = document.querySelector('.page-header__itms');
+    var productList = document.querySelector('.cart-page__cnt .cart-prod-list');
+    var products = productList.querySelectorAll('article');
+    
+    if(run) {
+        productsCycle(run, toRemove, products);
+    } else {
+        productsCycle(run, toRemove, products);
+    }
+}
+
+function productsCycle(run, toRemove, products) {
+    if(run) {
+        toRemove.style.visibility = 'hidden';
+    } else {
+        toRemove.style.visibility = 'unset';
+    }
+
+    products.forEach(function(item) {
+        var pictureParent = item.querySelector('picture').parentElement;
+        if(run) {
+            pictureParent.style.pointerEvents = 'none';
+        } else {
+            pictureParent.style.pointerEvents = 'unset';
+        }
+       
+    });
+}
+</script>

@@ -1,0 +1,25 @@
+<h2>Guida all'implementazione di Growthbook</h2>
+
+link GB DOC: https://docs.growthbook.io/
+
+La nostra configurazione standard si compone di 5 script:
+
+1. Localstorage_checker: 
+Alla visita dell'utente si occupa di verificare che i dati memorizzati da Growthbook nel localstorage non siano più vecchi di 6 mesi, nel caso lo fossero vengono immediatamente azzerati.
+nello specifico alla prima visita viene settato un timestamp della data della prima visita, in questo modo a tutte le successive visite posso per differenza dalla data odierna verificare quanto vecchi siano i dati presenti nel localstorage
+
+Le chiavi che nello specifico rimuoviamo sono: ['gbFeaturesCache', 'gb_timestamp', 'growthbook_timestamp']; la prima viene generata direttamente dal tool, e le altre sono iniettate da noi in altri script. Inoltre ci preoccupiamo di rimuovere la chiave globale del localstorage che assumerà il nome di gb_domain 
+essendo il localstorage specifico per ogni sito web, non ci sono problemi di sovrapposizione, nello specifico un sito x avrà il proprio localstorage, con le proprie chiavi ed il sito y avrà le sue.
+
+
+<b>2. Localstorage_tracking:</b> 
+Allo stato attuale questo script si occupa del tracciamento dell'utente, viene generata subito una chiave con nome gb_domain, che al suo interno contiene alcune informazioni sulla journey dell'utente, come per esempio: 
+
+-  il conatore delle visite dell'utente sul dominio globale mediante la funzione aggiornaVisite();
+-  La percentuale di scroll della pagina dell'utente mediante la funzione aggiornaScrollHeight(), che aggiornato il dato con lo scroll dell'utente su una scala da 0% (nessuno scroll) a 100% (scroll fondo pagina);
+-  Il tempo di permanenza sulla pagina da parte dell'utente mediante la funzione aggiornaTempoPermanenza() che inizia a contare i secondi dall'atterraggio fino alla sua uscita, da desktop mediante l'evento beforeunload e da mobile mediante visibilitychange che tiene traccia se la pagina non è più nello schermo, quindi comprendiamo sia l'uscita che l'eventuale cambio di tab;
+-  Il click sui link che possiedono l'attributo ([data-tracking])  nel caso di Telepass mediante la funzione tracciaClick(), ogni click su un elemento con l'attributo presente viene registrato per ogni singola pagina visitata del sito;
+
+Lo script si preoccupa di generare all'interno di gb_domain l'elenco delle pagine visitate inserendole in un sottoparametro chiamato "pages", dove avremo l'elenco di ogni pagina visita con i relativi eventi sopraelencati.
+
+Alcuni parametri sono anche globali per il dominio, come per esempio il contatore delle visite, in questo modo posso sia individuare per esempio, un utente di ritorno sulla singola pagina, ma anche sul sito web in generale, dandomi la possibilità di personalizzare lo script Audience setup a piacimento

@@ -1,0 +1,50 @@
+<script>
+const myColumn = document.querySelectorAll('.prod-info.prod-info-notifyme')[0];
+
+const myCompleteLook = document.querySelectorAll('.ctl-slider-wrapper')[0];         
+const myCompleteLookLabel = document.querySelectorAll('.ctl-slider-name')[0];       
+const myBreadcrumbs  = document.querySelectorAll('.cm-pdp-mosaic-details')[0];
+const myServicesCarousel = document.querySelectorAll('.help-slider')[0];
+
+const myCompleteLookContainer = document.querySelectorAll('.ctl-slider')[0];        
+const myCompleteLookContainerClone = myCompleteLookContainer.cloneNode(false);    
+myCompleteLookContainer.classList.add('hide');                                      
+
+myColumn.append(myCompleteLookContainerClone);                                      
+myCompleteLookContainerClone.append(myCompleteLookLabel);                           
+myCompleteLookContainerClone.append(myCompleteLook);
+myColumn.append(myBreadcrumbs);
+myColumn.append(myServicesCarousel);
+
+const  myNavigationWrapper = document.querySelectorAll('.ctl-slider-wrapper> .navigation-wrapper')[0];
+myNavigationWrapper.classList.add('hide');                                          
+
+toggle();
+window.onresize = function() {
+    toggle();
+};
+
+function toggle() {
+    if (document.querySelectorAll('.ctl-slider-wrapper').length > 1) {
+        myCompleteLookContainerClone.innerHTML = " ";
+        const myCompleteLook = document.querySelectorAll('.ctl-slider-wrapper')[0];
+        const myCompleteLookLabel = document.querySelectorAll('.ctl-slider-name')[0];
+
+        myCompleteLookContainerClone.append(myCompleteLookLabel);
+        myCompleteLookContainerClone.append(myCompleteLook);
+    }
+    else{
+    }
+};
+
+let cssStuff = 
+` 
+<style type="text/css">
+    .hide {
+        display: none;
+    }
+</style>
+`;
+
+document.head.innerHTML+= cssStuff;
+</script>

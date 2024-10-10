@@ -1,0 +1,184 @@
+<script>
+var dataLayer = window.dataLayer || [];
+var country = dataLayer[0].country;
+var language = dataLayer[0].language;
+// TAGLIA IN MENO
+var titleTextBig = 'Per questi prodotti si consiglia di selezionare mezzo numero in più rispetto alla taglia consueta, per piedi caratterizzati da un collo del piede alto.';
+switch (language) {
+    case 'it':
+        titleTextBig = 'Per questi prodotti si consiglia di selezionare mezzo numero in più rispetto alla taglia consueta, per piedi caratterizzati da un collo del piede alto.';
+        break;
+    case 'fr':
+        titleTextBig = 'Modèle pour ces produits, il est recommandé de sélectionner un demi-nombre de plus que la taille habituelle, pour les pieds caractérisés par un col du pied haut.';
+        break;
+    case 'de':
+        titleTextBig = 'Für diese Produkte empfehlen wir, eine halbe zusätzliche Nummer als gewöhnlich auszuwählen, für Füsse mit hohem Spann.';
+        break;
+    case 'en':
+        titleTextBig = 'Reduced for high arched feet. For these products we recommend choosing half a size bigger than your usual size, for high arched feet.';
+        break;
+    case 'es':
+        titleTextBig = 'Para esos productos recomendamos elegir media talla más con respecto al número habitual, para pies caracterizados por un empiene alto.';
+        break;
+    default:
+        break;
+}
+const targetElement = document.querySelector('.prod-info__c-btns');
+const container = document.createElement('div');
+container.style.display = 'flex';
+container.className = 'guide-text';
+//container.style.alignItems = 'center';
+const svgContainer = document.createElement('div');
+svgContainer.innerHTML = `
+    <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-top: 5px;">
+        <path d="M3.30769 1L1 4M1 4L3.30769 7M1 4H13M10.6923 1L13 4M13 4L10.6923 7" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+`;
+const textElement = document.createElement('span');
+textElement.textContent = titleTextBig;
+container.appendChild(svgContainer);
+container.appendChild(textElement);
+// pare che non sia presente in pdp ma solo nei menu
+//targetElement.parentNode.insertBefore(container, targetElement);
+// Style aggiuntivo
+const style = document.createElement('style');
+style.textContent = '\
+.guide-text {gap: 10px;} \
+.slide-sizes-ctn.d-flex.flex-column.align-items-start span:nth-child(2) {font-weight: 600; font-size: 12px; line-height: 14.56px}\
+.side-layer.size-guide-layer .guide-text {background: #E0E0E0 !important; padding: 20px 20px 20px 20px; gap: 10px; margin: 8px 28px 28px 64px;}\
+@media(max-width:768px){\
+  .side-layer.size-guide-layer .guide-text {padding:20px 11px 20px 13px; gap: 10px; margin: 20px}\
+  .slide-sizes-ctn__cta {margin-bottom: 28px;}\
+}\
+.guide-text span {font-weight: 600; font-size: 14px!important; line-height: 16.98px!important}\
+'
+document.head.append(style);
+// Funzione per appendere il testo
+function appendText() {
+  const guidaTaglie = document.querySelector('.side-layer.size-guide-layer');
+  if (guidaTaglie) {
+    const cloneGuide = container.cloneNode(true);
+    if (guidaTaglie.childNodes.length >= 2) {
+      guidaTaglie.insertBefore(cloneGuide, guidaTaglie.childNodes[2]);
+    } else {
+      guidaTaglie.appendChild(cloneGuide);
+    }
+    clearInterval(intervalID);
+  }
+}
+// Esegui la funzione di aggiornamento ogni 50 millisecondi
+var intervalID = setInterval(appendText, 50);
+// Listener per ridimensionare
+window.addEventListener('resize', function() {
+  const guidaTaglie = document.querySelector('.side-layer.size-guide-layer');
+  const existingCloneGuide = document.querySelector('.guide-text');
+  if (guidaTaglie && existingCloneGuide) {
+    guidaTaglie.removeChild(existingCloneGuide); // Rimuovi il clone esistente
+    if (guidaTaglie.childNodes.length >= 2) {
+      guidaTaglie.insertBefore(existingCloneGuide, guidaTaglie.childNodes[2]);
+    } else {
+      guidaTaglie.appendChild(existingCloneGuide);
+    }
+  }
+});
+// Selezione taglie
+const selezionaTaglie = document.querySelector('.side-layer.sizes-layer');
+const selezionaTarget = document.querySelector('ul.pdp-sizes.p-0');
+const cloneSize = container.cloneNode(true);
+if(selezionaTarget){
+  selezionaTarget.parentNode.insertBefore(cloneSize, selezionaTarget);
+}
+</script>
+
+<script>
+
+var dataLayer = window.dataLayer || [];
+var country = dataLayer[0].country;
+var language = dataLayer[0].language;
+// TAGLIA IN MENO
+var titleTextBig = 'Per questi prodotti si consiglia di selezionare mezzo numero in meno rispetto alla taglia consueta, per piedi affusolati e caratterizzati da un collo del piede basso.';
+switch (language) {
+    case 'it':
+        titleTextBig = 'Per questi prodotti si consiglia di selezionare mezzo numero in meno rispetto alla taglia consueta, per piedi affusolati e caratterizzati da un collo del piede basso.';
+        break;
+    case 'fr':
+        titleTextBig = 'Modèle pour ces produits, il est recommandé de sélectionner un demi-nombre de moins que la taille habituelle, pour les pieds effilés et caractérisés par un cou-de-pied bas.';
+        break;
+    case 'de':
+        titleTextBig = 'Für diese Produkte empfehlen wir, eine halbe Nummer weniger als gewöhnlich auszuwählen, für besonders zierliche Füße mit niedrigem Spann.';
+        break;
+    case 'en':
+        titleTextBig = 'Model for low arched feed with tapered toes. For these products we recommend choosing half a size smaller than your usual size, for low arched feed with tapered toes.';
+        break;
+    case 'es':
+        titleTextBig = 'Para esos productos recomendamos elegir media talla menos con respecto al número habitual, para pies ahusados y caracterizados por un empeine bajo.';
+        break;
+    default:
+        break;
+}
+const targetElement = document.querySelector('.prod-info__c-btns');
+const container = document.createElement('div');
+container.style.display = 'flex';
+container.className = 'guide-text';
+//container.style.alignItems = 'center';
+const svgContainer = document.createElement('div');
+svgContainer.innerHTML = `
+    <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-top: 5px;">
+        <path d="M3.30769 1L1 4M1 4L3.30769 7M1 4H13M10.6923 1L13 4M13 4L10.6923 7" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+`;
+const textElement = document.createElement('span');
+textElement.textContent = titleTextBig;
+container.appendChild(svgContainer);
+container.appendChild(textElement);
+// pare che non sia presente in pdp ma solo nei menu
+//targetElement.parentNode.insertBefore(container, targetElement);
+// Style aggiuntivo
+const style = document.createElement('style');
+style.textContent = '\
+.guide-text {gap: 10px;} \
+.slide-sizes-ctn.d-flex.flex-column.align-items-start span:nth-child(2) {font-weight: 600; font-size: 12px; line-height: 14.56px}\
+.side-layer.size-guide-layer .guide-text {background: #E0E0E0 !important; padding:20px 32px 20px 20px; gap: 10px; margin: 8px 28px 28px 64px;}\
+@media(max-width:768px){\
+  .side-layer.size-guide-layer .guide-text {padding:20px 11px 20px 13px; gap: 10px; margin: 20px}\
+  .slide-sizes-ctn__cta {margin-bottom: 28px;}\
+}\
+.guide-text span {font-weight: 600; font-size: 14px!important; line-height: 16.98px!important}\
+'
+document.head.append(style);
+// Funzione per appendere il testo
+function appendText() {
+  const guidaTaglie = document.querySelector('.side-layer.size-guide-layer');
+  if (guidaTaglie) {
+    const cloneGuide = container.cloneNode(true);
+    if (guidaTaglie.childNodes.length >= 2) {
+      guidaTaglie.insertBefore(cloneGuide, guidaTaglie.childNodes[2]);
+    } else {
+      guidaTaglie.appendChild(cloneGuide);
+    }
+    clearInterval(intervalID);
+  }
+}
+// Esegui la funzione di aggiornamento ogni 50 millisecondi
+var intervalID = setInterval(appendText, 50);
+// Listener per ridimensionare
+window.addEventListener('resize', function() {
+  const guidaTaglie = document.querySelector('.side-layer.size-guide-layer');
+  const existingCloneGuide = document.querySelector('.guide-text');
+  if (guidaTaglie && existingCloneGuide) {
+    guidaTaglie.removeChild(existingCloneGuide); // Rimuovi il clone esistente
+    if (guidaTaglie.childNodes.length >= 2) {
+      guidaTaglie.insertBefore(existingCloneGuide, guidaTaglie.childNodes[2]);
+    } else {
+      guidaTaglie.appendChild(existingCloneGuide);
+    }
+  }
+});
+// Selezione taglie
+const selezionaTaglie = document.querySelector('.side-layer.sizes-layer');
+const selezionaTarget = document.querySelector('ul.pdp-sizes.p-0');
+const cloneSize = container.cloneNode(true);
+if(selezionaTarget){
+  selezionaTarget.parentNode.insertBefore(cloneSize, selezionaTarget);
+}
+    </script>

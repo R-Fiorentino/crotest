@@ -1,0 +1,99 @@
+<script>
+setTimeout(function() {
+    rollBackScripts('[class*="mtRollback"]');
+
+
+
+function rollBackScripts(selector) {
+    const observer = new MutationObserver(mutationCallback);
+    observer.observe(document, { childList: true, subtree: true });
+ 
+    function mutationCallback(mutationsList, observer) {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                for (const node of mutation.addedNodes) {
+                    if (node.tagName === 'SCRIPT' && checkScriptSrc(node)) {
+                        console.log('New script with src containing "/trk/4/" added:');
+                        console.log(node);
+                        onPageChange(selector);
+                    }
+                }
+            }
+        }
+    }
+ 
+    function checkScriptSrc(script) {
+        return script.src && script.src.includes('/trk/4/');
+    }
+ 
+    function onPageChange(selector) {
+        const elementsWithClass = document.querySelectorAll(selector);
+        elementsWithClass.forEach(element => {
+            element.remove();
+            console.log(element);
+        });
+        if (elementsWithClass.length > 0) {
+            observer.disconnect();
+        }
+    }
+}
+    if(!document.getElementById('you-may-like-jkl')){
+        // Prendo l'elemento che deve essere ancorato
+        var youMayLike = document.querySelector('#cbar_widget0');
+        
+        // Creo il link di ancoraggio da inserire
+        var anchorUMayLike = document.createElement('a');
+        anchorUMayLike.id = 'you-may-like-jkl';
+        anchorUMayLike.classList.add('pdp-cnt__i-link');
+        anchorUMayLike.classList.add('mtRollback');
+
+        var copyAnchor = '<span style="color:black;">Prodotti Simili</span>';
+        
+        // Mi prendo la lingua/country in cui siamo
+        var url = window.location.href;
+        url = url.split('/');
+        var languageCountry = url[3].split('-');
+        var currentLanguage = languageCountry[1];
+        
+        // da sostituire poi nell'innerHTML al posto di copyAnchor
+        var copyUMayLike = '';
+        var languages = [];
+        var translations = [];
+        for(let i = 0; i < languages.length; i++){
+            copyUMayLike = '<span style="color:black;">' +  translations[i] + '</span>';
+        }
+        
+        var icon = '<i class="icon-hearth undefined"></i>';
+        anchorUMayLike.innerHTML = icon + copyAnchor;
+        
+        var remove_from_scroll = '';
+        
+        if(window.screen.width <= 768){
+            remove_from_scroll = 160;
+        } else {
+            remove_from_scroll = 80;
+        }
+        
+        window.addEventListener('resize', function(){
+            if(window.screen.width <= 768){
+                remove_from_scroll = 160;
+            } else {
+                remove_from_scroll = 80;
+            }
+        });
+        
+        // Prendo l'elemento di riferimento sopra a cui inserire il nostro link
+        var links = document.querySelector('.pdp-cnt__lnks');
+        links.parentNode.insertBefore(anchorUMayLike, links);
+        anchorUMayLike.addEventListener('click', function(){
+            var scrollPosition = youMayLike.offsetTop - remove_from_scroll;
+            window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+            });
+        });
+    }
+}, 1000);
+
+
+</script>

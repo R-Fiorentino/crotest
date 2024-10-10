@@ -1,0 +1,99 @@
+<!-- Gestione dei filtri in mobile utilizzando soltanto la sticky bar in bottom 0 -->
+<script>
+(function() {
+    if (window.innerWidth <= 600) {
+        let filterButton, filterModal;
+        let lastScrollTop = 0;
+
+        const intervalId = setInterval(function() {
+            filterButton = document.querySelector('.filters-layer-trigger');
+            filterModal = document.querySelector('.filters-layer');
+
+            if (filterButton && filterModal) {
+                clearInterval(intervalId);
+
+                let filterCount = 0;
+
+                const circleSpan = document.createElement('span');
+                circleSpan.style.cssText = `
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #fff;
+                    color: black;
+                    text-align: center;
+                    border-radius: 50%;
+                    margin-left: 10px;
+                    font-size: 12px;
+                    line-height: 20px;
+                    font-weight: bold;
+                `;
+                filterButton.parentNode.insertBefore(circleSpan, filterButton.nextSibling);
+
+                function updateFilterCount() {
+                    filterCount = document.querySelectorAll('.filter-uga-0 .custom-control-input:checked, .filter-uga-1 .custom-control-input:checked').length;
+                    circleSpan.textContent = filterCount;
+                    circleSpan.style.display = filterCount > 0 ? 'inline-block' : 'none';
+                }
+
+                const tagliaCheckboxes = document.querySelectorAll('.filter-uga-0 .custom-control-input, .filter-uga-1 .custom-control-input');
+                tagliaCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateFilterCount);
+                });
+
+                filterButton.addEventListener('click', function() {
+                    lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                });
+
+                filterModal.addEventListener('transitionend', function () {
+                    if (filterModal.classList.contains('show')) {
+                        window.scrollTo(0, lastScrollTop);
+                    }
+                });
+
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class') {
+                            const isModalOpen = filterModal.classList.contains('show') && filterModal.classList.contains('display');
+                            if (!isModalOpen) {
+                                updateFilterCount();
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(filterModal, { attributes: true });
+                updateFilterCount();
+            }
+        }, 500);
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @media only screen and (max-width: 600px) {
+                .cm-filter-wrp .filter-sub {
+                    display: flex;
+                    flex-direction: row-reverse;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .modal-overlay{
+                background: #fff!important;
+                }
+                .cm-filter-wrp .filter-sub .filter-text{
+                    padding-left: 8px;
+                }
+                .modal.filters-layer {
+                    visibility: hidden;
+                    opacity: 0;
+                    transition: visibility 0s, opacity 0s ease-in-out;
+                }
+                .modal.filters-layer.show{
+                    visibility: visible;
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+})();
+</script>
